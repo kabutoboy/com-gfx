@@ -276,19 +276,27 @@ protected:
 	Circle seeds2 = {OUTER_SEEDS_RADIUS};
 	Flower petals1 = {RADIUS, NUMBER_OF_PETALS};
 	Flower petals2 = {RADIUS, NUMBER_OF_PETALS};
+	Flower petals3 = {RADIUS, NUMBER_OF_PETALS};
+	Flower petals4 = {RADIUS, NUMBER_OF_PETALS};
 public:
 	static float constexpr NUMBER_OF_PETALS = 12;
 	static float constexpr RADIUS = 100;
-	static float constexpr INNER_SEEDS_RADIUS = 30;
+	static float constexpr INNER_SEEDS_RADIUS =  0;
 	static float constexpr OUTER_SEEDS_RADIUS = 40;
 	SunFlower(float scl = 1, float rotation = 0, Point *translation = new Point({0, 0})) {
 
 		seeds1.setColor(0x5d4239);
 		seeds2.setColor(0x795548);
 		petals1.setColor(0xffeb3b);
-		petals2.setColor(0xffc107);
-		petals2.rotate(PI / NUMBER_OF_PETALS);
+		petals2.setColor(0xffd219);
+		petals3.setColor(0xffdc1e);
+		petals4.setColor(0xffc107);
+		petals2.rotate(-1 * PI / NUMBER_OF_PETALS / 2);
+		petals3.rotate(1 * PI / NUMBER_OF_PETALS / 2);
+		petals4.rotate(2 * PI / NUMBER_OF_PETALS / 2);
 
+		add(&petals4);
+		add(&petals3);
 		add(&petals2);
 		add(&petals1);
 		add(&seeds2);
@@ -318,45 +326,58 @@ void init(void)
 	Circle *sunGlow3 = new Circle(130, 130);
 	sunGlow3->setColor(0xc0e7f9);
 	sunGlow3->translate(new Point({0, 100}));
-	all.add(sunGlow3);
 
 	Circle *sunGlow2 = new Circle(100, 100);
 	sunGlow2->setColor(0xdef2fc);
 	sunGlow2->translate(new Point({0, 100}));
-	all.add(sunGlow2);
 
 	Circle *sunGlow1 = new Circle(80, 80);
 	sunGlow1->setColor(0xf0f9fe);
 	sunGlow1->translate(new Point({0, 100}));
-	all.add(sunGlow1);
 
-	Circle *sun = new Circle(70, 70);
-	sun->setColor(0xffffff);
-	sun->translate(new Point({0, 100}));
+	Circle *sunCenter = new Circle(70, 70);
+	sunCenter->setColor(0xffffff);
+	sunCenter->translate(new Point({0, 100}));
+
+	Group *sun = new Group();
+	sun->add(sunGlow3);
+	sun->add(sunGlow2);
+	sun->add(sunGlow1);
+	sun->add(sunCenter);
+
+	sun->add(new SunFlower(.6, 0, new Point({0, 100})));
+
 	all.add(sun);
 
 	MyEllipse *cloud22 = new MyEllipse(30, 15, 70);
 	cloud22->setColor(0xfffffc);
 	cloud22->translate(new Point({140, 180}));
-	all.add(cloud22);
 
 	MyEllipse *cloud21 = new MyEllipse(40, 20, 70);
 	cloud21->setColor(0xfffffc);
 	cloud21->translate(new Point({100, 190}));
-	all.add(cloud21);
 
-	MyEllipse *cloud2 = new MyEllipse(50, 20, 70);
-	cloud2->setColor(0xfffffc);
-	cloud2->translate(new Point({-150, 140}));
+	Group *cloud2 = new Group();
+	cloud2->add(cloud22);
+	cloud2->add(cloud21);
 	all.add(cloud2);
 
-	MyEllipse *cloud1 = new MyEllipse(40, 20, 70);
-	cloud1->setColor(0xfffffc);
-	cloud1->translate(new Point({-100, 150}));
+	MyEllipse *cloud12 = new MyEllipse(50, 20, 70);
+	cloud12->setColor(0xfffffc);
+	cloud12->translate(new Point({-150, 140}));
+
+	MyEllipse *cloud11 = new MyEllipse(40, 20, 70);
+	cloud11->setColor(0xfffffc);
+	cloud11->translate(new Point({-100, 150}));
+
+	Group *cloud1 = new Group();
+	cloud1->add(cloud12);
+	cloud1->add(cloud11);
 	all.add(cloud1);
 
 	MyRectangle *grass = new MyRectangle(600, 400);
-	grass->setColor(0x795548);
+	grass->setColor(0x67754c);
+	// grass->setColor(0x795548);
 	grass->translate(new Point({0, -100}));
 	all.add(grass);
 
