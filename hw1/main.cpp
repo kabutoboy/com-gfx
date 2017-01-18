@@ -1,69 +1,40 @@
 #include <GL/glut.h>
+#include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <valarray>
 #include <vector>
+#include <initializer_list>
 
 //#define PI 3.14159
 constexpr float PI = acos(-1);
 
 using namespace std;
 
-template <class T>
-class BinaryOperation {
-public:
-	static T add(T a, T b) {
-		return a + b;
-	}
-	static T sub(T a, T b) {
-		return a - b;
-	}
-	static T subAbs(T a, T b) {
-		return abs(a - b);
-	}
-};
-
 class Point {
-
 protected:
-	valarray<float> data;
-
+	vector<float> data;
 public:
-	// CONSTRUCTORS
-    Point(float x) {
-        data.resize(1);
-        data[0] = x;
-    }
-	Point(float x, float y) {
-		data.resize(2);
-		data[0] = x;
-		data[1] = y;
+	Point() { }
+	Point(initializer_list<float> given) {
+		this->data.assign(given);
 	}
-	Point(float x, float y, float z) {
-		data.resize(3);
-		data[0] = x;
-		data[1] = y;
-		data[2] = z;
+	Point(vector<float> given) {
+		this->data = given;
 	}
-	Point() {
-		Point(.0, .0);
+	float at(int i) {
+		return data.at(i);
 	}
-	Point(valarray<float> &data) {
-		this->data = data;
-	}
-
-	// NON-MODIFYING
-	float get(int i) {
-		return data[i];
-	}
-	int dimensions() {
+	int size() {
 		return data.size();
 	}
-	float sumOfPow(float p) {
-		return pow(data, p).sum();
+	auto begin() {
+		return data.begin();
 	}
-	Point copy() {
-		Point b(data);
+	auto end() {
+		return data.end();
+	}
+	Point *copy() {
+		Point *b = new Point(data);
 		return b;
 	}
 	void dump(string prefix = "") {
@@ -81,69 +52,58 @@ public:
 	}
 
 	// MODIFYING
+	void assign(initializer_list<float> given) {
+		this->data.assign(given);
+	}
+	void assign(vector<float> given) {
+		this->data = given;
+	}
     void resize(int n) {
-        data.resize(n);
+      data.resize(n);
     }
 	void set(int i, float val) {
 		data[i] = val;
 	}
 	void scale(float amount, Point *center) {
-		for (int i = 0; i < this->dimensions(); i++) {
-			data[i] = amount * (data[i] - center->get(i)) + center->get(i);
-		}
-	}
-	Point *binOp(Point *b, float (*op)(float, float)) {
-		int n = this->dimensions();
-		if (b->dimensions() == n) {
-			for (int i = 0; i < n; i++) {
-				data[i] = op(get(i), b->get(i));
-			}
-		}
-		return this;
+		transform(data.begin(), data.end(), center->begin(), data.begin(), [amount](const float &data_i, const float &center_i) {
+			// data[i] = amount * (data[i] - center->get(i)) + center->get(i);
+			return center_i + amount * (data_i - center_i);
+            // return fma(amount, data_i - center_i, center_i);
+		});
 	}
 	Point *add(Point *b) {
-		return binOp(b, BinaryOperation<float>::add);
+		vector<float> *a = &data;
+		transform(a->begin(), a->end(), b->begin(), a->begin(), [](const float &a_i, const float &b_i) {
+			return a_i + b_i;
+		});
+		return this;
 	}
 	Point *sub(Point *b) {
-		return binOp(b, BinaryOperation<float>::sub);
+		vector<float> *a = &data;
+		transform(a->begin(), a->end(), b->begin(), a->begin(), [](const float &a_i, const float &b_i) {
+			return a_i - b_i;
+		});
+		return this;
+	}
+	Point *abs() {
+		for_each(data.begin(), data.end(), [](float &x) {
+			x = std::abs(x);
+		});
+		return this;
 	}
 
 // STATIC
-	static Point binOp(Point *a, Point *b, float (*op)(float, float)) {
-		Point c = a->copy();
-		c.binOp(b, op);
-		return c;
+	static Point *add(Point *a, Point *b) {
+		return a->copy()->add(b);
 	}
-	static Point add(Point *a, Point *b) {
-		return binOp(a, b, BinaryOperation<float>::add);
+	static Point *sub(Point *a, Point *b) {
+		return b->copy()->sub(b);
 	}
-	static Point sub(Point *a, Point *b) {
-		return binOp(a, b, BinaryOperation<float>::sub);
-	}
-	static Point subAbs(Point *a, Point *b) {
-		return binOp(a, b, BinaryOperation<float>::subAbs);
+	static Point *subAbs(Point *a, Point *b) {
+		return b->copy()->sub(b)->abs();
 	}
 
 };
-
-// class Metric {
-// protected:
-// 	float p;
-// 	float pInv;
-// public:
-// 	// CONSTRUCTORS
-// 	Metric(float p) {
-// 		this->p = p;
-// 		this->pInv = 1. / p;
-// 	}
-// 	Metric() {
-// 		Metric(2.);
-// 	}
-// 	// NON-MODIFYING
-// 	distance(Point *a, Point *b) {
-// 		return pow((Point::subAbs(a, b)).sumOfPow(p), pInv);
-// 	}
-// };
 
 class Drawable {
 public:
@@ -163,8 +123,8 @@ protected:
 public:
 	Polygon() {
 		// vertices = {};
-		color = {0, 0, 0};
-		position = {0, 0};
+		color.assign({0, 0, 0});
+		position.assign({0, 0});
 		scl = 1;
 		angle = 0;
 	}
@@ -173,46 +133,49 @@ public:
 	void draw() override {
 		// glBegin(GL_LINES);
 		glBegin(GL_POLYGON);
-		glColor3f(color.get(0), color.get(1), color.get(2));
+		glColor3f(color.at(0), color.at(1), color.at(2));
 		for (Point v: vertices) {
-			glVertex2f(v.get(0), v.get(1));
+			glVertex2f(v.at(0), v.at(1));
 		}
 		glEnd();
 	}
 
 	// MODIFYING
 	void setColor(int hex) {
-		color = {
+		color.assign({
 			(float)(0xFF & (hex >> 16)) / 255,
 			(float)(0xFF & (hex >> 8)) / 255,
 			(float)(0xFF & (hex)) / 255
-		};
+		});
 	}
 	void setColor(float r, float g, float b) {
-		color = {r, g, b};
+		color.assign({r, g, b});
 	}
 	void setPosition(float x, float y) {
-		position = {x, y};
+		position.assign({x, y});
 	}
 	void scale(float amount) override {
 		this->scl *= amount;
-		for (Point &v: vertices) {
-			v.scale(amount, &position);
-		}
+		Point *pos = &position;
+		for_each(vertices.begin(), vertices.end(), [amount, pos](Point &v){
+			v.scale(amount, pos);
+		});
 	}
 	void rotate(float amount) override {
 		this->angle += amount;
-		for (Point &v: vertices) {
-			float x = v.get(0), y = v.get(1);
+		for_each(vertices.begin(), vertices.end(), [amount](Point &v){
+			float x = v.at(0), y = v.at(1);
 			v.set(0, x * cos(amount) - y * sin(amount));
 			v.set(1, x * sin(amount) + y * cos(amount));
-		}
+            // v.set(0, fma(x, cos(amount), -y * sin(amount)));
+            // v.set(1, fma(x, sin(amount), +y * cos(amount)));
+		});
 	}
 	void translate(Point *amount) override {
 		this->position.add(amount);
-		for (Point &v: vertices) {
+		for_each(vertices.begin(), vertices.end(), [amount](Point &v){
 			v.add(amount);
-		}
+		});
 	}
 };
 
@@ -220,10 +183,10 @@ class MyRectangle : public Polygon {
 public:
 	MyRectangle(float w, float h) {
 		vertices.resize(4);
-		vertices[0] = {(float).5 * (-w), (float).5 * (-h)};
-		vertices[1] = {(float).5 * (+w), (float).5 * (-h)};
-		vertices[2] = {(float).5 * (+w), (float).5 * (+h)};
-		vertices[3] = {(float).5 * (-w), (float).5 * (+h)};
+		vertices[0].assign({(float).5 * (-w), (float).5 * (-h)});
+		vertices[1].assign({(float).5 * (+w), (float).5 * (-h)});
+		vertices[2].assign({(float).5 * (+w), (float).5 * (+h)});
+		vertices[3].assign({(float).5 * (-w), (float).5 * (+h)});
 	}
 };
 
@@ -237,7 +200,7 @@ public:
 		vertices.resize(n);
 		for (int i = 0; i < n; i++) {
 			float angle = 2 * PI * i / n;
-			vertices[i] = {a * cos(angle), b * sin(angle)};
+			vertices[i].assign({a * cos(angle), b * sin(angle)});
 		}
 	}
 };
@@ -252,7 +215,7 @@ public:
 		vertices.resize(n);
 		for (int i = 0; i < n; i++) {
 			float angle = 2 * PI * i / n;
-			vertices[i] = {r * cos(angle), r * sin(angle)};
+			vertices[i].assign({r * cos(angle), r * sin(angle)});
 		}
 	}
 };
@@ -267,10 +230,10 @@ public:
 		vertices.resize(n);
 		for (int i = 0; i < n; i++) {
 			float angle = 2 * PI * i / n;
-			vertices[i] = {
+			vertices[i].assign({
 				r * sin((float).5 * petals * angle) * cos(angle),
 				r * sin((float).5 * petals * angle) * sin(angle)
-			};
+			});
 		}
 	}
 };
@@ -313,19 +276,27 @@ protected:
 	Circle seeds2 = {OUTER_SEEDS_RADIUS};
 	Flower petals1 = {RADIUS, NUMBER_OF_PETALS};
 	Flower petals2 = {RADIUS, NUMBER_OF_PETALS};
+	Flower petals3 = {RADIUS, NUMBER_OF_PETALS};
+	Flower petals4 = {RADIUS, NUMBER_OF_PETALS};
 public:
 	static float constexpr NUMBER_OF_PETALS = 12;
 	static float constexpr RADIUS = 100;
-	static float constexpr INNER_SEEDS_RADIUS = 30;
+	static float constexpr INNER_SEEDS_RADIUS =  0;
 	static float constexpr OUTER_SEEDS_RADIUS = 40;
-	SunFlower(float scl = 1, float rotation = 0, Point *translation = new Point{0, 0}) {
+	SunFlower(float scl = 1, float rotation = 0, Point *translation = new Point({0, 0})) {
 
 		seeds1.setColor(0x5d4239);
 		seeds2.setColor(0x795548);
 		petals1.setColor(0xffeb3b);
-		petals2.setColor(0xffc107);
-		petals2.rotate(PI / NUMBER_OF_PETALS);
+		petals2.setColor(0xffd219);
+		petals3.setColor(0xffdc1e);
+		petals4.setColor(0xffc107);
+		petals2.rotate(-1 * PI / NUMBER_OF_PETALS / 2);
+		petals3.rotate(1 * PI / NUMBER_OF_PETALS / 2);
+		petals4.rotate(2 * PI / NUMBER_OF_PETALS / 2);
 
+		add(&petals4);
+		add(&petals3);
 		add(&petals2);
 		add(&petals1);
 		add(&seeds2);
@@ -354,47 +325,60 @@ void init(void)
 
 	Circle *sunGlow3 = new Circle(130, 130);
 	sunGlow3->setColor(0xc0e7f9);
-	sunGlow3->translate(new Point{0, 100});
-	all.add(sunGlow3);
+	sunGlow3->translate(new Point({0, 100}));
 
 	Circle *sunGlow2 = new Circle(100, 100);
 	sunGlow2->setColor(0xdef2fc);
-	sunGlow2->translate(new Point{0, 100});
-	all.add(sunGlow2);
+	sunGlow2->translate(new Point({0, 100}));
 
 	Circle *sunGlow1 = new Circle(80, 80);
 	sunGlow1->setColor(0xf0f9fe);
-	sunGlow1->translate(new Point{0, 100});
-	all.add(sunGlow1);
+	sunGlow1->translate(new Point({0, 100}));
 
-	Circle *sun = new Circle(70, 70);
-	sun->setColor(0xffffff);
-	sun->translate(new Point{0, 100});
+	Circle *sunCenter = new Circle(70, 70);
+	sunCenter->setColor(0xffffff);
+	sunCenter->translate(new Point({0, 100}));
+
+	Group *sun = new Group();
+	sun->add(sunGlow3);
+	sun->add(sunGlow2);
+	sun->add(sunGlow1);
+	sun->add(sunCenter);
+
+	sun->add(new SunFlower(.6, 0, new Point({0, 100})));
+
 	all.add(sun);
 
 	MyEllipse *cloud22 = new MyEllipse(30, 15, 70);
 	cloud22->setColor(0xfffffc);
-	cloud22->translate(new Point{140, 180});
-	all.add(cloud22);
+	cloud22->translate(new Point({140, 180}));
 
 	MyEllipse *cloud21 = new MyEllipse(40, 20, 70);
 	cloud21->setColor(0xfffffc);
-	cloud21->translate(new Point{100, 190});
-	all.add(cloud21);
+	cloud21->translate(new Point({100, 190}));
 
-	MyEllipse *cloud2 = new MyEllipse(50, 20, 70);
-	cloud2->setColor(0xfffffc);
-	cloud2->translate(new Point{-150, 140});
+	Group *cloud2 = new Group();
+	cloud2->add(cloud22);
+	cloud2->add(cloud21);
 	all.add(cloud2);
 
-	MyEllipse *cloud1 = new MyEllipse(40, 20, 70);
-	cloud1->setColor(0xfffffc);
-	cloud1->translate(new Point{-100, 150});
+	MyEllipse *cloud12 = new MyEllipse(50, 20, 70);
+	cloud12->setColor(0xfffffc);
+	cloud12->translate(new Point({-150, 140}));
+
+	MyEllipse *cloud11 = new MyEllipse(40, 20, 70);
+	cloud11->setColor(0xfffffc);
+	cloud11->translate(new Point({-100, 150}));
+
+	Group *cloud1 = new Group();
+	cloud1->add(cloud12);
+	cloud1->add(cloud11);
 	all.add(cloud1);
 
 	MyRectangle *grass = new MyRectangle(600, 400);
-	grass->setColor(0x795548);
-	grass->translate(new Point{0, -100});
+	grass->setColor(0x67754c);
+	// grass->setColor(0x795548);
+	grass->translate(new Point({0, -100}));
 	all.add(grass);
 
 	int m = 20, n = 80;
@@ -406,10 +390,10 @@ void init(void)
 			SunFlower *sunFlower = new SunFlower{
                 scl,
                 2 * PI * (i + j) / (m + n),
-                new Point{
+                new Point({
                     scl * 2 * r * (n/2 - j) * ((float)(i+1) / m),
                     (float)(100 - 1 * i * i)
-                }
+                })
             };
 			row->add(sunFlower);
 		}
