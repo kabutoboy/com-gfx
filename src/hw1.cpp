@@ -47,7 +47,7 @@ void init(void)
 	sun->add(sunGlow1);
 	sun->add(sunCenter);
 
-	sun->add(new MySunFlower(.6, 0, new MyPoint({0, 100})));
+	// sun->add(new MySunFlower(.6, 0, new MyPoint({0, 100})));
 
 	all.add(sun);
 
