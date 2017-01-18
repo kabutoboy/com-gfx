@@ -1,15 +1,12 @@
-#include "drawable.h"
-#include "point.h"
+#ifndef MY_POLYGON_
+#define MY_POLYGON_
+
+#include "drawable.hpp"
+#include "point.hpp"
+
+using namespace std;
 
 class MyPolygon : public MyDrawable {
-
-protected:
-
-	vector<MyPoint> vertices;
-	MyPoint color;
-	MyPoint position;
-	float scl;
-	float angle;
 
 public:
 
@@ -25,4 +22,15 @@ public:
 	void scale(float) override;
 	void rotate(float) override;
 	void translate(MyPoint*) override;
+
+protected:
+
+	vector<MyPoint> vertices;
+	MyPoint color;
+	MyPoint position;
+	float scl;
+	float angle;
+
 };
+
+#endif

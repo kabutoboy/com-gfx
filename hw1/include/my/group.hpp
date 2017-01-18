@@ -1,13 +1,24 @@
-#include "drawable.h"
+#ifndef MY_GROUP_
+#define MY_GROUP_
+
+#include <vector>
+#include "drawable.hpp"
 
 class MyGroup : public MyDrawable {
-protected:
-	vector<MyDrawable*> children;
+
 public:
-	GMyroup();
+
+	MyGroup();
 	void add(MyDrawable*);
 	void draw() override;
 	void scale(float) override;
 	void rotate(float) override;
 	void translate(MyPoint*) override;
+
+protected:
+
+	vector<MyDrawable*> children;
+
 };
+
+#endif
