@@ -5,10 +5,7 @@
 
 class MyEllipse : public MyPolygon {
 public:
-
-  MyEllipse(float,
-            float,
-            int = 0);
+  MyEllipse(float, float, int = 0);
 };
 
 #endif // ifndef MY_ELLIPSE_

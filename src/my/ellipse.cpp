@@ -12,6 +12,6 @@ MyEllipse::MyEllipse(float a, float b, int n) {
 
   for (int i = 0; i < n; i++) {
     float angle = 2 * PI * i / n;
-    vertices[i].assign({ a *cos(angle), b * sin(angle) });
+    vertices[i].assign({a * cosf(angle), b * sinf(angle)});
   }
 }
