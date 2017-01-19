@@ -11,12 +11,14 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 SRC := $(call rwildcard,src/,*.cpp)
 OBJ = $(subst src,obj,$(subst .cpp,.o,$(SRC)))
+MY_SRC := $(call rwildcard,src/my/,*.cpp)
+MY_OBJ = $(subst src,obj,$(subst .cpp,.o,$(MY_SRC)))
 
 .PHONY : all
 
 all : $(OBJ)
 
-bin/%.exe : obj/%.o $(OBJ)
+bin/%.exe : obj/%.o $(MY_OBJ)
 	# g++ -o "$@" $^ -L"lib\x64" -lfreeglut -lopengl32 -lglu32 -std=c++14
 	g++ -o "$@" $^ -L"lib" -lfreeglut -lopengl32 -lglu32 -std=c++14
 

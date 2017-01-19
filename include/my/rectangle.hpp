@@ -4,11 +4,10 @@
 #include "polygon.hpp"
 
 class MyRectangle : public MyPolygon {
-
 public:
 
-	MyRectangle(float, float);
-
+  MyRectangle(float,
+              float);
 };
 
-#endif
+#endif // ifndef MY_RECTANGLE_

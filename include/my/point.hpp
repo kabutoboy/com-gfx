@@ -8,40 +8,43 @@
 using namespace std;
 
 class MyPoint {
-
 public:
 
-	MyPoint();
-	MyPoint(initializer_list<float>);
-	MyPoint(vector<float>);
+  MyPoint();
+  MyPoint(initializer_list<float>);
+  MyPoint(vector<float>);
 
   // NON-MODIFYING
-	float at(int);
-	int size();
-	auto begin();
-	auto end();
-	MyPoint *copy();
-	void dump(string = "");
+  float    at(int);
+  int      size();
+  auto     begin();
+  auto     end();
+  MyPoint* copy();
+  void dump(string = "");
 
-	// MODIFYING
-	void assign(initializer_list<float>);
-	void assign(vector<float>);
-  void resize(int);
-	void set(int, float);
-	void scale(float, MyPoint*);
-	MyPoint *add(MyPoint*);
-	MyPoint *sub(MyPoint*);
-	MyPoint *abs();
+  // MODIFYING
+  void            assign(initializer_list<float>);
+  void            assign(vector<float>);
+  void            resize(int);
+  void            set(int,
+                      float);
+  void            scale(float,
+                        MyPoint *);
+  MyPoint       * add(MyPoint *);
+  MyPoint       * sub(MyPoint *);
+  MyPoint       * abs();
 
   // STATIC
-	static MyPoint *add(MyPoint*, MyPoint*);
-	static MyPoint *sub(MyPoint*, MyPoint*);
-	static MyPoint *subAbs(MyPoint*, MyPoint*);
+  static MyPoint* add(MyPoint *,
+                      MyPoint *);
+  static MyPoint* sub(MyPoint *,
+                      MyPoint *);
+  static MyPoint* subAbs(MyPoint *,
+                         MyPoint *);
 
 protected:
 
-	vector<float> data;
-
+  vector<float>data;
 };
 
-#endif
+#endif // ifndef MY_POINT_
