@@ -2,8 +2,8 @@
 
 MyRectangle::MyRectangle(float w, float h) {
   vertices.resize(4);
-  vertices[0].assign({ (float).5 * (-w), (float).5 * (-h) });
-  vertices[1].assign({ (float).5 * (+w), (float).5 * (-h) });
-  vertices[2].assign({ (float).5 * (+w), (float).5 * (+h) });
-  vertices[3].assign({ (float).5 * (-w), (float).5 * (+h) });
+  vertices[0].assign({.5f * -w, .5f * -h});
+  vertices[1].assign({.5f * w, .5f * -h});
+  vertices[2].assign({.5f * w, .5f * h});
+  vertices[3].assign({.5f * -w, .5f * h});
 }

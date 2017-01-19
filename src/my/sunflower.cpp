@@ -1,5 +1,5 @@
-#include "my/mathconst.hpp"
 #include "my/group.hpp"
+#include "my/mathconst.hpp"
 #include "my/sunflower.hpp"
 
 MySunFlower::MySunFlower(float scl, float rotation, MyPoint *translation) {

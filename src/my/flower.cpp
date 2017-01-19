@@ -1,6 +1,6 @@
-#include <cmath>
-#include "my/mathconst.hpp"
 #include "my/flower.hpp"
+#include "my/mathconst.hpp"
+#include <cmath>
 
 MyFlower::MyFlower(float r, float petals, int n) {
   if (n == 0) {
@@ -11,9 +11,7 @@ MyFlower::MyFlower(float r, float petals, int n) {
 
   for (int i = 0; i < n; i++) {
     float angle = 2 * PI * i / n;
-    vertices[i].assign({
-      r *sin((float).5 * petals * angle) * cos(angle),
-      r * sin((float).5 * petals * angle) * sin(angle)
-    });
+    vertices[i].assign({r * sinf(.5f * petals * angle) * cosf(angle),
+                        r * sinf(.5f * petals * angle) * sinf(angle)});
   }
 }

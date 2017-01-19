@@ -5,9 +5,7 @@
 
 class MyRectangle : public MyPolygon {
 public:
-
-  MyRectangle(float,
-              float);
+  MyRectangle(float, float);
 };
 
 #endif // ifndef MY_RECTANGLE_

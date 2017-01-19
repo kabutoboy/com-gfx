@@ -1,12 +1,11 @@
 #ifndef MY_GROUP_
 #define MY_GROUP_
 
-#include <vector>
 #include "drawable.hpp"
+#include <vector>
 
 class MyGroup : public MyDrawable {
 public:
-
   MyGroup();
   void add(MyDrawable *);
   void draw() override;
@@ -15,8 +14,7 @@ public:
   void translate(MyPoint *) override;
 
 protected:
-
-  vector<MyDrawable *>children;
+  std::vector<MyDrawable *> children;
 };
 
 #endif // ifndef MY_GROUP_

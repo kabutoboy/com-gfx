@@ -19,15 +19,12 @@ MY_OBJ = $(subst src,obj,$(subst .cpp,.o,$(MY_SRC)))
 all : $(OBJ)
 
 bin/%.exe : obj/%.o $(MY_OBJ)
-	# g++ -o "$@" $^ -L"lib\x64" -lfreeglut -lopengl32 -lglu32 -std=c++14
-	g++ -o "$@" $^ -L"lib" -lfreeglut -lopengl32 -lglu32 -std=c++14
+	g++ -o "$@" $^ -L"lib\x64" -lfreeglut -lopengl32 -lglu32 -std=c++14
 
 obj/%.o : src/%.cpp include/%.hpp
-	# if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
-	mkdir -p $(dir $@)
+	if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
 	g++ -c -o "$@" "$<" -I"include" -std=c++14
 
 obj/%.o : src/%.cpp # include/%.hpp
-	# if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
-	mkdir -p $(dir $@)
+	if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
 	g++ -c -o "$@" "$<" -I"include" -std=c++14

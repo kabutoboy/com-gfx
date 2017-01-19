@@ -5,9 +5,7 @@
 
 class MyCircle : public MyPolygon {
 public:
-
-  MyCircle(float,
-           int = 0);
+  MyCircle(float, int = 0);
 };
 
 #endif // ifndef MY_CIRCLE_
