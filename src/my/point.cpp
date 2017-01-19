@@ -59,25 +59,22 @@ void MyPoint::set(int i, float val) { data[i] = val; }
 
 void MyPoint::scale(float amount, MyPoint *center) {
   std::transform(data.begin(), data.end(), center->begin(), data.begin(),
-            [amount](const float &data_i, const float &center_i) {
-              // data[i] = amount * (data[i] - center->get(i)) + center->get(i);
-              return center_i + amount * (data_i - center_i);
-
-              // return fma(amount, data_i - center_i, center_i);
-            });
+                 [amount](const float &data_i, const float &center_i) {
+                   return center_i + amount * (data_i - center_i);
+                 });
 }
 
 MyPoint *MyPoint::add(MyPoint *b) {
   std::vector<float> *a = &data;
   std::transform(a->begin(), a->end(), b->begin(), a->begin(),
-            [](const float &a_i, const float &b_i) { return a_i + b_i; });
+                 [](const float &a_i, const float &b_i) { return a_i + b_i; });
   return this;
 }
 
 MyPoint *MyPoint::sub(MyPoint *b) {
   std::vector<float> *a = &data;
   std::transform(a->begin(), a->end(), b->begin(), a->begin(),
-            [](const float &a_i, const float &b_i) { return a_i - b_i; });
+                 [](const float &a_i, const float &b_i) { return a_i - b_i; });
   return this;
 }
 
