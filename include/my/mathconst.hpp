@@ -5,4 +5,4 @@
 
 constexpr float PI = acos(-1);
 
-#endif
+#endif // ifndef MATH_CONST_
