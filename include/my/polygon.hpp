@@ -9,7 +9,7 @@ public:
   MyPolygon();
 
   // NON-MODIFYING
-  void draw() override;
+  void draw(float = 1) override;
 
   // MODIFYING
   void setColor(int);

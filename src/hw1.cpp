@@ -14,6 +14,16 @@ MyGroup all;
 int displayWidth = 600;
 int displayHeight = 600;
 
+int frameRate = 60; // frames per sec
+int frameTime = 1000 / frameRate; // millisecs per frame
+
+int totalFrames = 600;
+int currentFrame = 0;
+
+int currentTime;
+int lastTime;
+int elapsedTime;
+
 void init(void) {
   glClearColor(0.2, 0.2, 0.3, 1.0);
   gluOrtho2D(-250, 250.0, -250.0, 250.0);
@@ -98,24 +108,52 @@ void init(void) {
     row->scale((float)(i + 1) / m);
     all.add(row);
   }
+
+  lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
+  elapsedTime = 0;
 }
 
-void draw() { all.draw(); }
+void draw() {
+  currentTime = glutGet(GLUT_ELAPSED_TIME);
+  int deltaTime = currentTime - lastTime;
+  elapsedTime += deltaTime;
+  lastTime = currentTime;
+
+  if (elapsedTime >= frameTime) {// next frame
+    // ++currentFrame;
+    currentFrame = (elapsedTime/frameTime + currentFrame);
+    if (currentFrame < totalFrames) {
+      all.draw((float)currentFrame / (float)totalFrames);
+    } else {
+      all.draw();
+    }
+    elapsedTime = 0;
+  }
+  // std::cout << "deltaTime: " << deltaTime << "\n";
+  // std::cout << "elapsedTime: " << elapsedTime << "\n";
+  // std::cout << "currentFrame: " << currentFrame << "\n";
+}
 
 void display() {
   glClear(GL_COLOR_BUFFER_BIT);
   draw();
   glFlush();
+  glutSwapBuffers();
+}
+
+void redisplay() {
+  glutPostRedisplay();
 }
 
 int main(int argc, char **argv) {
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowSize(displayWidth, displayHeight);
   glutInitWindowPosition(100, 100);
   glutCreateWindow("Test OpenGL");
-  glutDisplayFunc(display);
   init();
+  glutDisplayFunc(display);
+  glutIdleFunc(redisplay);
   glutMainLoop();
   return 0;
 }

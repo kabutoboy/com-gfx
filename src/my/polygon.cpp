@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 
 #include "my/polygon.hpp"
 #include <GL/glut.h>
@@ -12,11 +13,12 @@ MyPolygon::MyPolygon() {
 }
 
 // NON-MODIFYING
-void MyPolygon::draw() {
+void MyPolygon::draw(float amount) {
   // glBegin(GL_LINES);
   glBegin(GL_POLYGON);
   glColor3f(color.at(0), color.at(1), color.at(2));
-  for (MyPoint v : vertices) {
+  for (int i = 0, n = (int)(amount * (float)vertices.size()); i < n; i++) {
+    auto &v = vertices.at(i);
     glVertex2f(v.at(0), v.at(1));
   }
   glEnd();

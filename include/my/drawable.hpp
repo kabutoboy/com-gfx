@@ -5,7 +5,7 @@
 
 class MyDrawable {
 public:
-  virtual void draw() {}
+  virtual void draw(float = 1) = 0;
 
   virtual void scale(float) = 0;
   virtual void rotate(float) = 0;

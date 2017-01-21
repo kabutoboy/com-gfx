@@ -6,9 +6,9 @@ MyGroup::MyGroup() {}
 
 void MyGroup::add(MyDrawable *child) { children.push_back(child); }
 
-void MyGroup::draw() {
+void MyGroup::draw(float amount) {
   for (auto &c : children) {
-    c->draw();
+    c->draw(amount);
   }
 }
 

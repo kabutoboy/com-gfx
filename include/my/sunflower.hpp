@@ -8,7 +8,7 @@
 
 class MySunFlower : public MyGroup {
 public:
-  static float constexpr NUMBER_OF_PETALS = 12;
+  static float constexpr NUMBER_OF_PETALS = 16;
   static float constexpr RADIUS = 100;
   static float constexpr INNER_SEEDS_RADIUS = 30;
   static float constexpr OUTER_SEEDS_RADIUS = 40;
@@ -19,8 +19,8 @@ protected:
   MyCircle seeds2 = {OUTER_SEEDS_RADIUS};
   MyFlower petals1 = {RADIUS, NUMBER_OF_PETALS};
   MyFlower petals2 = {RADIUS, NUMBER_OF_PETALS};
-  MyFlower petals3 = {RADIUS, NUMBER_OF_PETALS};
-  MyFlower petals4 = {RADIUS, NUMBER_OF_PETALS};
+  // MyFlower petals3 = {RADIUS, NUMBER_OF_PETALS};
+  // MyFlower petals4 = {RADIUS, NUMBER_OF_PETALS};
 };
 
 #endif // ifndef MY_SUNFLOWER_
