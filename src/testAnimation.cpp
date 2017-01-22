@@ -1,6 +1,6 @@
 #include <GL/glut.h>
 #include <stdio.h>
-#include <windows.h>
+// #include <windows.h>
 
 static float dx1 = 0.0, dy1 = 0.0;
 static float dx2 = 0.0, dy2 = 0.0;

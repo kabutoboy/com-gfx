@@ -6,9 +6,9 @@ MyGroup::MyGroup() {}
 
 void MyGroup::add(MyDrawable *child) { children.push_back(child); }
 
-void MyGroup::draw() {
+void MyGroup::draw(float amount) {
   for (auto &c : children) {
-    c->draw();
+    c->draw(amount);
   }
 }
 
@@ -27,5 +27,23 @@ void MyGroup::rotate(float amount) {
 void MyGroup::translate(MyPoint *amount) {
   for (auto &c : children) {
     c->translate(amount);
+  }
+}
+
+void MyGroup::setScale(float amount) {
+  for (auto &c : children) {
+    c->setScale(amount);
+  }
+}
+
+void MyGroup::setAngle(float amount) {
+  for (auto &c : children) {
+    c->setAngle(amount);
+  }
+}
+
+void MyGroup::setPosition(MyPoint *amount) {
+  for (auto &c : children) {
+    c->setPosition(amount);
   }
 }

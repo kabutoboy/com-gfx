@@ -8,10 +8,13 @@ class MyGroup : public MyDrawable {
 public:
   MyGroup();
   void add(MyDrawable *);
-  void draw() override;
+  void draw(float = 1) override;
   void scale(float) override;
   void rotate(float) override;
   void translate(MyPoint *) override;
+  void setScale(float) override;
+  void setAngle(float) override;
+  void setPosition(MyPoint *) override;
 
 protected:
   std::vector<MyDrawable *> children;

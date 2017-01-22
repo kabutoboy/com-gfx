@@ -9,7 +9,7 @@ public:
   MyPolygon();
 
   // NON-MODIFYING
-  void draw() override;
+  void draw(float = 1) override;
 
   // MODIFYING
   void setColor(int);
@@ -18,6 +18,9 @@ public:
   void scale(float) override;
   void rotate(float) override;
   void translate(MyPoint *) override;
+  void setScale(float) override;
+  void setAngle(float) override;
+  void setPosition(MyPoint *) override;
 
 protected:
   std::vector<MyPoint> vertices;

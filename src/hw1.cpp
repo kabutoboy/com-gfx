@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "my/animation.hpp"
 #include "my/circle.hpp"
 #include "my/ellipse.hpp"
 #include "my/group.hpp"
@@ -7,12 +8,24 @@
 #include "my/point.hpp"
 #include "my/rectangle.hpp"
 #include "my/sunflower.hpp"
+#include "my/timeline.hpp"
 #include <GL/glut.h>
 
 MyGroup all;
+MyTimeline timeline;
 
 int displayWidth = 600;
 int displayHeight = 600;
+
+int frameRate = 60;               // frames per sec
+int frameTime = 1000 / frameRate; // millisecs per frame
+
+int totalFrames = 600;
+int currentFrame = 0;
+
+int currentTime;
+int lastTime;
+int elapsedTime;
 
 void init(void) {
   glClearColor(0.2, 0.2, 0.3, 1.0);
@@ -44,7 +57,17 @@ void init(void) {
   sun->add(sunGlow1);
   sun->add(sunCenter);
 
-  // sun->add(new MySunFlower(.6, 0, new MyPoint({0, 100})));
+  // MySunFlower *sunFlower = new MySunFlower(.6f, 0, new MyPoint({0, 100}));
+  // all.add(sunFlower);
+  //
+  // timeline.add(new MyAnimation(sunFlower,
+  //                              [](auto *sf, float progress) {
+  //                               //  std::cout << progress << "\n";
+  //                                sf->setScale(progress);
+  //                                sf->rotate(2*PI * progress);
+  //                               // sf->scale(0.5f);
+  //                              },
+  //                              1000));
 
   all.add(sun);
 
@@ -85,37 +108,88 @@ void init(void) {
 
   for (int i = 0; i < m; i++) {
     MyGroup *row = new MyGroup();
+    float r = MySunFlower::RADIUS;
+    float scl = displayWidth / (2 * r) / n * 8;
+    float rowScale = (float)(i + 1) / (float)m;
+    float displayScale = scl * rowScale;
 
     for (int j = 0; j < n; j++) {
-      float r = MySunFlower::RADIUS;
-      float scl = displayWidth / (2 * r) / n * 8;
-      MySunFlower *sunFlower = new MySunFlower{
-          scl, 2 * PI * (i + j) / (m + n),
-          new MyPoint({scl * 2 * r * (n / 2 - j) * ((float)(i + 1) / m),
-                       100.f - 1.f * i * i})};
+      // std::cout << rowScale * scl << " ";
+      float x = scl * 2 * r * (n / 2 - j) * ((float)(i + 1) / m);
+      float y = 100.f - 1.f * i * i;
+      if (x < -.5f * displayWidth || x > .5f * displayWidth ||
+          y < -.5f * displayHeight || y > .5f * displayHeight) {
+        continue;
+      }
+      MySunFlower *sunFlower =
+          new MySunFlower{0, 2 * PI * (i + j) / (m + n), new MyPoint({x, y})};
       row->add(sunFlower);
+      // auto fn = [displayScale](MyDrawable *sf, float progress) {
+      //   //  std::cout << progress << "\n";
+      //   sf->setScale(displayScale * progress);
+      //   // sf->scale(0.5f);
+      // };
+      // timeline.add(new MyAnimation(sunFlower, fn, (int)(rowScale * 100.f)));
     }
-    row->scale((float)(i + 1) / m);
+    // std::cout << "\n";
+    // row->scale(rowScale);
     all.add(row);
+    auto fn = [displayScale](MyDrawable *row, float progress) {
+      //  std::cout << progress << "\n";
+      row->setScale(displayScale * progress);
+      // sf->scale(0.5f);
+    };
+    timeline.add(new MyAnimation(row, fn, (int)(rowScale * 1000.f)));
   }
+
+  lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
+  elapsedTime = 0;
+
+  timeline.loop(true);
+  timeline.play();
 }
 
-void draw() { all.draw(); }
+void draw() {
+  currentTime = glutGet(GLUT_ELAPSED_TIME);
+  int deltaTime = currentTime - lastTime;
+  // elapsedTime += deltaTime;
+  lastTime = currentTime;
+
+  timeline.update(deltaTime);
+
+  // if (elapsedTime >= frameTime) {// next frame
+  // ++currentFrame;
+  // currentFrame = (elapsedTime/frameTime + currentFrame);
+  // if (currentFrame < totalFrames) {
+  //   all.draw((float)currentFrame / (float)totalFrames);
+  // } else {
+  all.draw();
+  //   }
+  //   elapsedTime = 0;
+  // }
+  // std::cout << "deltaTime: " << deltaTime << "\n";
+  // std::cout << "elapsedTime: " << elapsedTime << "\n";
+  // std::cout << "currentFrame: " << currentFrame << "\n";
+}
 
 void display() {
   glClear(GL_COLOR_BUFFER_BIT);
   draw();
   glFlush();
+  glutSwapBuffers();
 }
+
+void redisplay() { glutPostRedisplay(); }
 
 int main(int argc, char **argv) {
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowSize(displayWidth, displayHeight);
   glutInitWindowPosition(100, 100);
   glutCreateWindow("Test OpenGL");
-  glutDisplayFunc(display);
   init();
+  glutDisplayFunc(display);
+  glutIdleFunc(redisplay);
   glutMainLoop();
   return 0;
 }

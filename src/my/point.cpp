@@ -24,11 +24,7 @@ auto MyPoint::begin() { return data.begin(); }
 
 auto MyPoint::end() { return data.end(); }
 
-MyPoint *MyPoint::copy() {
-  MyPoint *b = new MyPoint(data);
-
-  return b;
-}
+MyPoint *MyPoint::copy() { return new MyPoint(data); }
 
 void MyPoint::dump(std::string prefix) {
   std::cout << prefix;
