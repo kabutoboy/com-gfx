@@ -10,6 +10,9 @@ public:
   virtual void scale(float) = 0;
   virtual void rotate(float) = 0;
   virtual void translate(MyPoint *) = 0;
+  virtual void setScale(float) = 0;
+  virtual void setAngle(float) = 0;
+  virtual void setPosition(MyPoint *) = 0;
 };
 
 #endif // ifndef MY_DRAWABLE_

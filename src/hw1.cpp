@@ -31,100 +31,122 @@ void init(void) {
   glClearColor(0.2, 0.2, 0.3, 1.0);
   gluOrtho2D(-250, 250.0, -250.0, 250.0);
 
-  // MyRectangle *sky = new MyRectangle(600, 600);
-  // sky->setColor(0xafe0f7);
-  // all.add(sky);
-  //
-  // MyCircle *sunGlow3 = new MyCircle(130, 130);
-  // sunGlow3->setColor(0xc0e7f9);
-  // sunGlow3->translate(new MyPoint({0, 100}));
-  //
-  // MyCircle *sunGlow2 = new MyCircle(100, 100);
-  // sunGlow2->setColor(0xdef2fc);
-  // sunGlow2->translate(new MyPoint({0, 100}));
-  //
-  // MyCircle *sunGlow1 = new MyCircle(80, 80);
-  // sunGlow1->setColor(0xf0f9fe);
-  // sunGlow1->translate(new MyPoint({0, 100}));
-  //
-  // MyCircle *sunCenter = new MyCircle(70, 70);
-  // sunCenter->setColor(0xffffff);
-  // sunCenter->translate(new MyPoint({0, 100}));
-  //
-  // MyGroup *sun = new MyGroup();
-  // sun->add(sunGlow3);
-  // sun->add(sunGlow2);
-  // sun->add(sunGlow1);
-  // sun->add(sunCenter);
+  MyRectangle *sky = new MyRectangle(600, 600);
+  sky->setColor(0xafe0f7);
+  all.add(sky);
 
-  MySunFlower *sunFlower = new MySunFlower(.6, 0, new MyPoint({0, 100}));
-  all.add(sunFlower);
+  MyCircle *sunGlow3 = new MyCircle(130, 130);
+  sunGlow3->setColor(0xc0e7f9);
+  sunGlow3->translate(new MyPoint({0, 100}));
 
-  timeline.add(new MyAnimation(sunFlower,
-                               [](auto *sf, float progress) {
-                                //  std::cout << progress << "\n";
-                                 sf->scale(progress);
-                                 sf->rotate(2*PI * progress);
-                                // sf->scale(0.5f);
-                               },
-                               1000));
-  timeline.play();
+  MyCircle *sunGlow2 = new MyCircle(100, 100);
+  sunGlow2->setColor(0xdef2fc);
+  sunGlow2->translate(new MyPoint({0, 100}));
 
-  // all.add(sun);
+  MyCircle *sunGlow1 = new MyCircle(80, 80);
+  sunGlow1->setColor(0xf0f9fe);
+  sunGlow1->translate(new MyPoint({0, 100}));
 
-  // MyEllipse *cloud22 = new MyEllipse(30, 15, 70);
-  // cloud22->setColor(0xfffffc);
-  // cloud22->translate(new MyPoint({140, 180}));
+  MyCircle *sunCenter = new MyCircle(70, 70);
+  sunCenter->setColor(0xffffff);
+  sunCenter->translate(new MyPoint({0, 100}));
+
+  MyGroup *sun = new MyGroup();
+  sun->add(sunGlow3);
+  sun->add(sunGlow2);
+  sun->add(sunGlow1);
+  sun->add(sunCenter);
+
+  // MySunFlower *sunFlower = new MySunFlower(.6f, 0, new MyPoint({0, 100}));
+  // all.add(sunFlower);
   //
-  // MyEllipse *cloud21 = new MyEllipse(40, 20, 70);
-  // cloud21->setColor(0xfffffc);
-  // cloud21->translate(new MyPoint({100, 190}));
-  //
-  // MyGroup *cloud2 = new MyGroup();
-  // cloud2->add(cloud22);
-  // cloud2->add(cloud21);
-  // all.add(cloud2);
-  //
-  // MyEllipse *cloud12 = new MyEllipse(50, 20, 70);
-  // cloud12->setColor(0xfffffc);
-  // cloud12->translate(new MyPoint({-150, 140}));
-  //
-  // MyEllipse *cloud11 = new MyEllipse(40, 20, 70);
-  // cloud11->setColor(0xfffffc);
-  // cloud11->translate(new MyPoint({-100, 150}));
-  //
-  // MyGroup *cloud1 = new MyGroup();
-  // cloud1->add(cloud12);
-  // cloud1->add(cloud11);
-  // all.add(cloud1);
-  //
-  // MyRectangle *grass = new MyRectangle(600, 400);
-  // grass->setColor(0x67754c);
-  //
-  // // grass->setColor(0x795548);
-  // grass->translate(new MyPoint({0, -100}));
-  // all.add(grass);
-  //
-  // int m = 20, n = 80;
-  //
-  // for (int i = 0; i < m; i++) {
-  //   MyGroup *row = new MyGroup();
-  //
-  //   for (int j = 0; j < n; j++) {
-  //     float r = MySunFlower::RADIUS;
-  //     float scl = displayWidth / (2 * r) / n * 8;
-  //     MySunFlower *sunFlower = new MySunFlower{
-  //         scl, 2 * PI * (i + j) / (m + n),
-  //         new MyPoint({scl * 2 * r * (n / 2 - j) * ((float)(i + 1) / m),
-  //                      100.f - 1.f * i * i})};
-  //     row->add(sunFlower);
-  //   }
-  //   row->scale((float)(i + 1) / m);
-  //   all.add(row);
-  // }
+  // timeline.add(new MyAnimation(sunFlower,
+  //                              [](auto *sf, float progress) {
+  //                               //  std::cout << progress << "\n";
+  //                                sf->setScale(progress);
+  //                                sf->rotate(2*PI * progress);
+  //                               // sf->scale(0.5f);
+  //                              },
+  //                              1000));
+
+  all.add(sun);
+
+  MyEllipse *cloud22 = new MyEllipse(30, 15, 70);
+  cloud22->setColor(0xfffffc);
+  cloud22->translate(new MyPoint({140, 180}));
+
+  MyEllipse *cloud21 = new MyEllipse(40, 20, 70);
+  cloud21->setColor(0xfffffc);
+  cloud21->translate(new MyPoint({100, 190}));
+
+  MyGroup *cloud2 = new MyGroup();
+  cloud2->add(cloud22);
+  cloud2->add(cloud21);
+  all.add(cloud2);
+
+  MyEllipse *cloud12 = new MyEllipse(50, 20, 70);
+  cloud12->setColor(0xfffffc);
+  cloud12->translate(new MyPoint({-150, 140}));
+
+  MyEllipse *cloud11 = new MyEllipse(40, 20, 70);
+  cloud11->setColor(0xfffffc);
+  cloud11->translate(new MyPoint({-100, 150}));
+
+  MyGroup *cloud1 = new MyGroup();
+  cloud1->add(cloud12);
+  cloud1->add(cloud11);
+  all.add(cloud1);
+
+  MyRectangle *grass = new MyRectangle(600, 400);
+  grass->setColor(0x67754c);
+
+  // grass->setColor(0x795548);
+  grass->translate(new MyPoint({0, -100}));
+  all.add(grass);
+
+  int m = 20, n = 80;
+
+  for (int i = 0; i < m; i++) {
+    MyGroup *row = new MyGroup();
+    float r = MySunFlower::RADIUS;
+    float scl = displayWidth / (2 * r) / n * 8;
+    float rowScale = (float)(i + 1) / (float)m;
+    float displayScale = scl * rowScale;
+
+    for (int j = 0; j < n; j++) {
+      // std::cout << rowScale * scl << " ";
+      float x = scl * 2 * r * (n / 2 - j) * ((float)(i + 1) / m);
+      float y = 100.f - 1.f * i * i;
+      if (x < -.5f * displayWidth || x > .5f * displayWidth ||
+          y < -.5f * displayHeight || y > .5f * displayHeight) {
+        continue;
+      }
+      MySunFlower *sunFlower =
+          new MySunFlower{0, 2 * PI * (i + j) / (m + n), new MyPoint({x, y})};
+      row->add(sunFlower);
+      // auto fn = [displayScale](MyDrawable *sf, float progress) {
+      //   //  std::cout << progress << "\n";
+      //   sf->setScale(displayScale * progress);
+      //   // sf->scale(0.5f);
+      // };
+      // timeline.add(new MyAnimation(sunFlower, fn, (int)(rowScale * 100.f)));
+    }
+    // std::cout << "\n";
+    // row->scale(rowScale);
+    all.add(row);
+    auto fn = [displayScale](MyDrawable *row, float progress) {
+      //  std::cout << progress << "\n";
+      row->setScale(displayScale * progress);
+      // sf->scale(0.5f);
+    };
+    timeline.add(new MyAnimation(row, fn, (int)(rowScale * 1000.f)));
+  }
 
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
   elapsedTime = 0;
+
+  timeline.loop(true);
+  timeline.play();
 }
 
 void draw() {

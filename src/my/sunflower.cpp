@@ -21,7 +21,7 @@ MySunFlower::MySunFlower(float scl, float rotation, MyPoint *translation) {
   add(&seeds2);
   add(&seeds1);
 
-  scale(scl);
-  rotate(rotation);
   translate(translation);
+  rotate(rotation);
+  scale(scl);
 }

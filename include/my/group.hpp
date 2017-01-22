@@ -12,6 +12,9 @@ public:
   void scale(float) override;
   void rotate(float) override;
   void translate(MyPoint *) override;
+  void setScale(float) override;
+  void setAngle(float) override;
+  void setPosition(MyPoint *) override;
 
 protected:
   std::vector<MyDrawable *> children;

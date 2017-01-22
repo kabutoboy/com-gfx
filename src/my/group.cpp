@@ -29,3 +29,21 @@ void MyGroup::translate(MyPoint *amount) {
     c->translate(amount);
   }
 }
+
+void MyGroup::setScale(float amount) {
+  for (auto &c : children) {
+    c->setScale(amount);
+  }
+}
+
+void MyGroup::setAngle(float amount) {
+  for (auto &c : children) {
+    c->setAngle(amount);
+  }
+}
+
+void MyGroup::setPosition(MyPoint *amount) {
+  for (auto &c : children) {
+    c->setPosition(amount);
+  }
+}

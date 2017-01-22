@@ -22,14 +22,17 @@ void MyPolygon::draw(float amount) {
     auto &v = V.at(i);
     float x = v.at(0);
     float y = v.at(1);
-    float center_x = this->position.at(0);
-    float center_y = this->position.at(1);
-    x += center_x;
-    y += center_y;
+    // rotate first because we assume it is centered at (0, 0)
     float _x = x;
     float _y = y;
     x = _x * cosf(this->angle) - _y * sinf(this->angle);
     y = _x * sinf(this->angle) + _y * cosf(this->angle);
+    // translate
+    float center_x = this->position.at(0);
+    float center_y = this->position.at(1);
+    x += center_x;
+    y += center_y;
+    // scale
     x = center_x + this->scl * (x - center_x);
     y = center_y + this->scl * (y - center_y);
     glVertex2f(x, y);
@@ -53,16 +56,14 @@ void MyPolygon::setColor(float r, float g, float b) { color.assign({r, g, b}); }
 void MyPolygon::setPosition(float x, float y) { position.assign({x, y}); }
 
 void MyPolygon::scale(float amount) {
-  this->scl = amount;
-  // this->scl *= amount;
+  this->scl *= amount;
   // MyPoint *pos = &position;
   // for_each(vertices.begin(), vertices.end(),
   //          [amount, pos](MyPoint &v) { v.scale(amount, pos); });
 }
 
 void MyPolygon::rotate(float amount) {
-  this->angle = amount;
-  // this->angle += amount;
+  this->angle += amount;
   // for_each(vertices.begin(), vertices.end(), [amount](MyPoint &v) {
   //   float x = v.at(0), y = v.at(1);
   //   v.set(0, x * cosf(amount) - y * sinf(amount));
@@ -71,8 +72,13 @@ void MyPolygon::rotate(float amount) {
 }
 
 void MyPolygon::translate(MyPoint *amount) {
-  this->position = *amount;
-  // this->position.add(amount);
+  this->position.add(amount);
   // for_each(vertices.begin(), vertices.end(),
   //          [amount](MyPoint &v) { v.add(amount); });
 }
+
+void MyPolygon::setScale(float amount) { this->scl = amount; }
+
+void MyPolygon::setAngle(float amount) { this->angle = amount; }
+
+void MyPolygon::setPosition(MyPoint *amount) { this->position = *amount; }
