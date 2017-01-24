@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 
 #include "my/animation.hpp"
@@ -7,49 +9,55 @@
 #include "my/mathconst.hpp"
 #include "my/point.hpp"
 #include "my/rectangle.hpp"
+#include "my/scene.hpp"
 #include "my/sunflower.hpp"
 #include "my/timeline.hpp"
 #include <GL/glut.h>
 
 MyGroup all;
-MyTimeline timeline;
+MyScene scene;
 
-int displayWidth = 600;
-int displayHeight = 600;
-
-int frameRate = 60;               // frames per sec
-int frameTime = 1000 / frameRate; // millisecs per frame
-
-int totalFrames = 600;
-int currentFrame = 0;
+int displayWidth = 1600;
+int displayHeight = 900;
+float halfDisplayWidth = .5f * (float)displayWidth;
+float halfDisplayHeight = .5f * (float)displayHeight;
 
 int currentTime;
 int lastTime;
-int elapsedTime;
 
 void init(void) {
-  glClearColor(0.2, 0.2, 0.3, 1.0);
-  gluOrtho2D(-250, 250.0, -250.0, 250.0);
+  std::srand(std::time(0));
 
-  MyRectangle *sky = new MyRectangle(600, 600);
+  glClearColor(0.2, 0.2, 0.3, 1.0);
+  gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
+             halfDisplayHeight);
+
+  MyRectangle *sky = new MyRectangle(displayWidth, displayHeight);
   sky->setColor(0xafe0f7);
   all.add(sky);
 
   MyCircle *sunGlow3 = new MyCircle(130, 130);
-  sunGlow3->setColor(0xc0e7f9);
+  // sunGlow3->setColor(0xc0e7f9);
+  sunGlow3->setColor(0xffffff);
+  sunGlow3->setAlpha(.3f);
   sunGlow3->translate(new MyPoint({0, 100}));
 
   MyCircle *sunGlow2 = new MyCircle(100, 100);
-  sunGlow2->setColor(0xdef2fc);
+  // sunGlow2->setColor(0xdef2fc);
+  sunGlow2->setColor(0xffffff);
+  sunGlow2->setAlpha(.4f);
   sunGlow2->translate(new MyPoint({0, 100}));
 
   MyCircle *sunGlow1 = new MyCircle(80, 80);
-  sunGlow1->setColor(0xf0f9fe);
+  // sunGlow1->setColor(0xf0f9fe);
+  sunGlow1->setColor(0xffffff);
+  sunGlow1->setAlpha(.5f);
   sunGlow1->translate(new MyPoint({0, 100}));
 
   MyCircle *sunCenter = new MyCircle(70, 70);
+  MyPoint *sunPos = new MyPoint({0, 100});
   sunCenter->setColor(0xffffff);
-  sunCenter->translate(new MyPoint({0, 100}));
+  sunCenter->translate(sunPos);
 
   MyGroup *sun = new MyGroup();
   sun->add(sunGlow3);
@@ -57,119 +65,233 @@ void init(void) {
   sun->add(sunGlow1);
   sun->add(sunCenter);
 
-  // MySunFlower *sunFlower = new MySunFlower(.6f, 0, new MyPoint({0, 100}));
-  // all.add(sunFlower);
-  //
-  // timeline.add(new MyAnimation(sunFlower,
-  //                              [](auto *sf, float progress) {
-  //                               //  std::cout << progress << "\n";
-  //                                sf->setScale(progress);
-  //                                sf->rotate(2*PI * progress);
-  //                               // sf->scale(0.5f);
-  //                              },
-  //                              1000));
-
   all.add(sun);
 
   MyEllipse *cloud22 = new MyEllipse(30, 15, 70);
   cloud22->setColor(0xfffffc);
-  cloud22->translate(new MyPoint({140, 180}));
+  cloud22->translate(new MyPoint({40, 0}));
+  cloud22->embedPosition();
 
   MyEllipse *cloud21 = new MyEllipse(40, 20, 70);
   cloud21->setColor(0xfffffc);
-  cloud21->translate(new MyPoint({100, 190}));
+  cloud21->translate(new MyPoint({0, 10}));
+  cloud21->embedPosition();
 
   MyGroup *cloud2 = new MyGroup();
+  MyPoint *cloud2pos = new MyPoint({300, 280});
   cloud2->add(cloud22);
   cloud2->add(cloud21);
+  cloud2->translate(cloud2pos);
+  cloud2->scale(3.f);
   all.add(cloud2);
+
+  MyTimeline *tl = new MyTimeline();
+  scene.add(tl);
+  tl->add(new MyAnimation(
+      [cloud2, cloud2pos, sunPos](float progress) {
+        MyPoint *pos = cloud2pos->copy();
+        pos->scale(.9f + .1f * sinf(2 * PI * progress), sunPos);
+        cloud2->setPosition(pos);
+      },
+      8000));
+  tl->loop(true);
+  tl->play();
 
   MyEllipse *cloud12 = new MyEllipse(50, 20, 70);
   cloud12->setColor(0xfffffc);
-  cloud12->translate(new MyPoint({-150, 140}));
+  cloud12->translate(new MyPoint({-50, 0}));
+  cloud12->embedPosition();
 
   MyEllipse *cloud11 = new MyEllipse(40, 20, 70);
   cloud11->setColor(0xfffffc);
-  cloud11->translate(new MyPoint({-100, 150}));
+  cloud11->translate(new MyPoint({0, 10}));
+  cloud12->embedPosition();
 
   MyGroup *cloud1 = new MyGroup();
+  MyPoint *cloud1pos = new MyPoint({-320, 240});
   cloud1->add(cloud12);
   cloud1->add(cloud11);
+  cloud1->translate(cloud1pos);
+  cloud1->scale(3.f);
   all.add(cloud1);
 
-  MyRectangle *grass = new MyRectangle(600, 400);
+  tl = new MyTimeline();
+  scene.add(tl);
+  tl->add(new MyAnimation(
+      [cloud1, cloud1pos, sunPos](float progress) {
+        MyPoint *pos = cloud1pos->copy();
+        pos->scale(.9f + .1f * sinf(2 * PI * progress), sunPos);
+        cloud1->setPosition(pos);
+      },
+      8000));
+  tl->loop(true);
+  tl->play();
+
+  MyRectangle *grass = new MyRectangle(displayWidth, 100 + displayHeight / 2);
   grass->setColor(0x67754c);
 
   // grass->setColor(0x795548);
-  grass->translate(new MyPoint({0, -100}));
+  grass->translate(new MyPoint({0, -.5f * (float)(-100 + displayHeight / 2)}));
   all.add(grass);
 
-  int m = 20, n = 80;
+  // MyTimeline *tl1 = new MyTimeline();
+  // scene.add(tl1);
+  // tl1->play();
 
+  std::vector<MyGroup *> sunFlowerRows;
+  int m = 12, n = 80;
   for (int i = 0; i < m; i++) {
     MyGroup *row = new MyGroup();
+    sunFlowerRows.push_back(row);
     float r = MySunFlower::RADIUS;
     float scl = displayWidth / (2 * r) / n * 8;
-    float rowScale = (float)(i + 1) / (float)m;
-    float displayScale = scl * rowScale;
+    float rowScale = .1f + .9f * powf((float)(i + 1) / (float)m, .7f);
+    float sfScale = scl * rowScale;
 
     for (int j = 0; j < n; j++) {
       // std::cout << rowScale * scl << " ";
-      float x = scl * 2 * r * (n / 2 - j) * ((float)(i + 1) / m);
-      float y = 100.f - 1.f * i * i;
-      if (x < -.5f * displayWidth || x > .5f * displayWidth ||
-          y < -.5f * displayHeight || y > .5f * displayHeight) {
+      float x = scl * 2 * r * (n / 2 - j) * rowScale;
+      float y =
+          100.f -
+          powf((float)i / (float)(m - 1), 2.f) * (halfDisplayHeight + 100.f);
+      if (x < -halfDisplayWidth - sfScale * r ||
+          x > halfDisplayWidth + sfScale * r ||
+          y < -halfDisplayHeight - sfScale * r ||
+          y > halfDisplayHeight + sfScale * r) {
         continue;
       }
       MySunFlower *sunFlower =
           new MySunFlower{0, 2 * PI * (i + j) / (m + n), new MyPoint({x, y})};
       row->add(sunFlower);
-      // auto fn = [displayScale](MyDrawable *sf, float progress) {
-      //   //  std::cout << progress << "\n";
-      //   sf->setScale(displayScale * progress);
-      //   // sf->scale(0.5f);
-      // };
-      // timeline.add(new MyAnimation(sunFlower, fn, (int)(rowScale * 100.f)));
+      MyTimeline *tl = new MyTimeline();
+      scene.add(tl);
+      // wait
+      tl->add(new MyAnimation(
+          [](float progress) {},
+          (int)(powf(abs((float)j - .5f * n) / (.5f * n), 1.5f) * 20000.f +
+                powf((float)i / (float)m, 2.f) * 6000.f)));
+      // animation
+      tl->add(new MyAnimation(
+          [sunFlower, sfScale](float progress) {
+            float factor;
+            float thresh = .7f;
+            float expand = .3f;
+            if (progress < thresh) {
+              factor = (1.f + expand) * powf(progress / thresh, .5f);
+            } else {
+              factor = (1.f + expand) -
+                       expand * powf((progress - thresh) / (1 - thresh), 2.f);
+            }
+            sunFlower->setScale(sfScale * factor);
+          },
+          // (int)(rowScale * 1000.f)));
+          400));
+      // wait
+      tl->add(new MyAnimation([](float progress) {}, 5000));
+      // animation
+      int choice = std::rand() % 8;
+      if (choice == 0) {
+        int dir = std::rand() % 2 == 0 ? 1 : -1;
+        tl->add(new MyAnimation(
+            [sunFlower, sfScale, x, y, dir](float progress) {
+              float factor;
+              float jump = sfScale * 300.f;
+              float _x = x;
+              float _y = y;
+              float _angle = 0;
+              if (progress < .2f) {
+                _y = y + jump * powf(progress / .2f, .5f);
+              } else if (progress < .8f) {
+                _y = y + jump;
+                // _angle = 4 * powf(sinf(PI * (progress - .2f) / .6f), 2.f);
+                // integrate sin^2
+                float _progress = (progress - .2f) / .6f;
+                float __progress = PI * _progress;
+                _angle = dir * (2.f * __progress - sinf(2.f * __progress));
+              } else {
+                _y = y + jump * (1.f - powf((progress - .8f) / .2f, .5f));
+              }
+              sunFlower->setPosition(new MyPoint({_x, _y}));
+              sunFlower->setAngle(_angle);
+            },
+            // (int)(rowScale * 1000.f)));
+            1000));
+      } else {
+        tl->add(new MyAnimation(
+            [sunFlower, sfScale](float progress) {
+              float factor;
+              float thresh = .5f;
+              float expand = .2f;
+              if (progress < thresh) {
+                factor = 1.f + expand * powf(progress / thresh, .5f);
+              } else {
+                factor = (1.f + expand) -
+                         expand * powf((progress - thresh) / (1 - thresh), 2.f);
+              }
+              sunFlower->setScale(sfScale * factor);
+            },
+            // (int)(rowScale * 1000.f)));
+            200));
+      }
+      tl->setRepeatFrame(2);
+      tl->loop(true);
+      tl->play();
     }
     // std::cout << "\n";
     // row->scale(rowScale);
     all.add(row);
-    auto fn = [displayScale](MyDrawable *row, float progress) {
-      //  std::cout << progress << "\n";
-      row->setScale(displayScale * progress);
-      // sf->scale(0.5f);
-    };
-    timeline.add(new MyAnimation(row, fn, (int)(rowScale * 1000.f)));
+    // tl1->add(new MyAnimation(
+    //     [row, sfScale](float progress) {
+    //       float factor;
+    //       float thresh = .7f;
+    //       float expand = .3f;
+    //       if (progress < thresh) {
+    //         factor = (1.f + expand) * powf(progress / thresh, .5f);
+    //       } else {
+    //         factor = (1.f + expand) -
+    //                  expand * powf((progress - thresh) / (1 - thresh), 2.f);
+    //       }
+    //       row->setScale(sfScale * factor);
+    //     },
+    //     // (int)(rowScale * 1000.f)));
+    //     500));
   }
 
-  lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
-  elapsedTime = 0;
+  MyRectangle *darkness = new MyRectangle(displayWidth, displayHeight);
+  darkness->setColor(0x000000);
+  darkness->setAlpha(.5f);
+  all.add(darkness);
 
-  timeline.loop(true);
-  timeline.play();
+  MyTimeline *tl2 = new MyTimeline();
+  scene.add(tl2);
+  tl2->play();
+
+  tl2->add(new MyAnimation(
+      [sun, darkness](float progress) {
+        sun->setScale(1.5f * progress);
+        darkness->setAlpha(.5f - .5f * progress);
+      },
+      5000));
+
+  tl2->loop(true);
+  tl2->setRepeatFrame(1); // start at 0
+  tl2->add(new MyAnimation(
+      [sun](float progress) {
+        sun->setScale(1.5f + .2f * sinf(2 * PI * progress));
+      },
+      10000));
+
+  lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
 }
 
 void draw() {
   currentTime = glutGet(GLUT_ELAPSED_TIME);
   int deltaTime = currentTime - lastTime;
-  // elapsedTime += deltaTime;
   lastTime = currentTime;
 
-  timeline.update(deltaTime);
+  scene.update(deltaTime);
 
-  // if (elapsedTime >= frameTime) {// next frame
-  // ++currentFrame;
-  // currentFrame = (elapsedTime/frameTime + currentFrame);
-  // if (currentFrame < totalFrames) {
-  //   all.draw((float)currentFrame / (float)totalFrames);
-  // } else {
   all.draw();
-  //   }
-  //   elapsedTime = 0;
-  // }
-  // std::cout << "deltaTime: " << deltaTime << "\n";
-  // std::cout << "elapsedTime: " << elapsedTime << "\n";
-  // std::cout << "currentFrame: " << currentFrame << "\n";
 }
 
 void display() {
@@ -187,6 +309,8 @@ int main(int argc, char **argv) {
   glutInitWindowSize(displayWidth, displayHeight);
   glutInitWindowPosition(100, 100);
   glutCreateWindow("Test OpenGL");
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
   init();
   glutDisplayFunc(display);
   glutIdleFunc(redisplay);

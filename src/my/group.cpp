@@ -47,3 +47,21 @@ void MyGroup::setPosition(MyPoint *amount) {
     c->setPosition(amount);
   }
 }
+
+void MyGroup::embedScale() {
+  for (auto &c : children) {
+    c->embedScale();
+  }
+}
+
+void MyGroup::embedAngle() {
+  for (auto &c : children) {
+    c->embedAngle();
+  }
+}
+
+void MyGroup::embedPosition() {
+  for (auto &c : children) {
+    c->embedPosition();
+  }
+}

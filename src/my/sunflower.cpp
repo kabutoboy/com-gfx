@@ -10,6 +10,7 @@ MySunFlower::MySunFlower(float scl, float rotation, MyPoint *translation) {
   // petals3.setColor(0xffdc1e);
   // petals4.setColor(0xffc107);
   petals2.rotate(PI / MySunFlower::NUMBER_OF_PETALS / 1);
+  petals2.embedAngle();
   // petals2.rotate(-1 * PI / MySunFlower::NUMBER_OF_PETALS / 2);
   // petals3.rotate(1 * PI / MySunFlower::NUMBER_OF_PETALS / 2);
   // petals4.rotate(2 * PI / MySunFlower::NUMBER_OF_PETALS / 2);

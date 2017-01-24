@@ -14,6 +14,7 @@ public:
   // MODIFYING
   void setColor(int);
   void setColor(float, float, float);
+  void setAlpha(float);
   void setPosition(float, float);
   void scale(float) override;
   void rotate(float) override;
@@ -21,6 +22,9 @@ public:
   void setScale(float) override;
   void setAngle(float) override;
   void setPosition(MyPoint *) override;
+  void embedScale() override;
+  void embedAngle() override;
+  void embedPosition() override;
 
 protected:
   std::vector<MyPoint> vertices;
@@ -28,6 +32,7 @@ protected:
   MyPoint position;
   float scl;
   float angle;
+  float alpha;
 };
 
 #endif // ifndef MY_POLYGON_

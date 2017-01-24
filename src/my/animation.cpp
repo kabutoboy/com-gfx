@@ -1,17 +1,15 @@
 #include "my/animation.hpp"
 
-MyAnimation::MyAnimation(MyDrawable *actor,
-                         std::function<void(MyDrawable *, float)> action,
-                         int totalTime) {
-  this->actor = actor;
+// MyAnimation::MyAnimation(MyDrawable *actor,
+//                          std::function<void(MyDrawable *, float)> action,
+//                          int totalTime) {
+MyAnimation::MyAnimation(std::function<void(float)> action, int totalTime) {
   this->action = action;
   this->totalTime = totalTime;
   this->elapsedTime = 0;
 }
 
-void MyAnimation::restart() {
-  elapsedTime = 0;
-}
+void MyAnimation::restart() { elapsedTime = 0; }
 
 bool MyAnimation::update(int deltaTime) {
   elapsedTime += deltaTime;
@@ -19,6 +17,6 @@ bool MyAnimation::update(int deltaTime) {
   if (progress >= 1) {
     progress = 1;
   }
-  this->action(actor, progress);
+  this->action(progress);
   return progress >= 1;
 }

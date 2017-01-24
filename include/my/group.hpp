@@ -15,6 +15,9 @@ public:
   void setScale(float) override;
   void setAngle(float) override;
   void setPosition(MyPoint *) override;
+  void embedScale() override;
+  void embedAngle() override;
+  void embedPosition() override;
 
 protected:
   std::vector<MyDrawable *> children;
