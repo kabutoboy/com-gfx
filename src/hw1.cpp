@@ -87,11 +87,13 @@ void init(void) {
 
   MyTimeline *tl = new MyTimeline();
   scene.add(tl);
-  tl->add(new MyAnimation([cloud2, cloud2pos, sunPos](float progress) {
-    MyPoint *pos = cloud2pos->copy();
-    pos->scale(.9f + .1f * sinf(2 * PI * progress), sunPos);
-    cloud2->setPosition(pos);
-  }, 8000));
+  tl->add(new MyAnimation(
+      [cloud2, cloud2pos, sunPos](float progress) {
+        MyPoint *pos = cloud2pos->copy();
+        pos->scale(.9f + .1f * sinf(2 * PI * progress), sunPos);
+        cloud2->setPosition(pos);
+      },
+      8000));
   tl->loop(true);
   tl->play();
 
@@ -115,11 +117,13 @@ void init(void) {
 
   tl = new MyTimeline();
   scene.add(tl);
-  tl->add(new MyAnimation([cloud1, cloud1pos, sunPos](float progress) {
-    MyPoint *pos = cloud1pos->copy();
-    pos->scale(.9f + .1f * sinf(2 * PI * progress), sunPos);
-    cloud1->setPosition(pos);
-  }, 8000));
+  tl->add(new MyAnimation(
+      [cloud1, cloud1pos, sunPos](float progress) {
+        MyPoint *pos = cloud1pos->copy();
+        pos->scale(.9f + .1f * sinf(2 * PI * progress), sunPos);
+        cloud1->setPosition(pos);
+      },
+      8000));
   tl->loop(true);
   tl->play();
 
