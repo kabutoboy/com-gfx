@@ -17,8 +17,8 @@
 MyGroup all;
 MyScene scene;
 
-int displayWidth = 1600;
-int displayHeight = 900;
+int displayWidth = 1200;
+int displayHeight = 600;
 float halfDisplayWidth = .5f * (float)displayWidth;
 float halfDisplayHeight = .5f * (float)displayHeight;
 
@@ -90,7 +90,7 @@ void init(void) {
   tl->add(new MyAnimation(
       [cloud2, cloud2pos, sunPos](float progress) {
         MyPoint *pos = cloud2pos->copy();
-        pos->scale(.9f + .1f * sinf(2 * PI * progress), sunPos);
+        pos->scale(.9f + .1f * sinf(TAU * progress), sunPos);
         cloud2->setPosition(pos);
       },
       8000));
@@ -120,23 +120,17 @@ void init(void) {
   tl->add(new MyAnimation(
       [cloud1, cloud1pos, sunPos](float progress) {
         MyPoint *pos = cloud1pos->copy();
-        pos->scale(.9f + .1f * sinf(2 * PI * progress), sunPos);
+        pos->scale(.9f + .1f * sinf(TAU * progress), sunPos);
         cloud1->setPosition(pos);
       },
       8000));
   tl->loop(true);
   tl->play();
 
-  MyRectangle *grass = new MyRectangle(displayWidth, 100 + displayHeight / 2);
+  MyRectangle *grass = new MyRectangle(displayWidth, 100 + halfDisplayHeight);
   grass->setColor(0x67754c);
-
-  // grass->setColor(0x795548);
-  grass->translate(new MyPoint({0, -.5f * (float)(-100 + displayHeight / 2)}));
+  grass->translate(new MyPoint({0, -.5f * (float)(-100 + halfDisplayHeight)}));
   all.add(grass);
-
-  // MyTimeline *tl1 = new MyTimeline();
-  // scene.add(tl1);
-  // tl1->play();
 
   std::vector<MyGroup *> sunFlowerRows;
   int m = 12, n = 80;
@@ -161,7 +155,7 @@ void init(void) {
         continue;
       }
       MySunFlower *sunFlower =
-          new MySunFlower{0, 2 * PI * (i + j) / (m + n), new MyPoint({x, y})};
+          new MySunFlower{0, TAU * (i + j) / (m + n), new MyPoint({x, y})};
       row->add(sunFlower);
       MyTimeline *tl = new MyTimeline();
       scene.add(tl);
@@ -184,7 +178,6 @@ void init(void) {
             }
             sunFlower->setScale(sfScale * factor);
           },
-          // (int)(rowScale * 1000.f)));
           400));
       // wait
       tl->add(new MyAnimation([](float progress) {}, 5000));
@@ -200,21 +193,19 @@ void init(void) {
               float _y = y;
               float _angle = 0;
               if (progress < .2f) {
-                _y = y + jump * powf(progress / .2f, .5f);
+                _y = y + jump * powf(progress / .2f, .2f);
               } else if (progress < .8f) {
                 _y = y + jump;
-                // _angle = 4 * powf(sinf(PI * (progress - .2f) / .6f), 2.f);
-                // integrate sin^2
                 float _progress = (progress - .2f) / .6f;
                 float __progress = PI * _progress;
+                // integral of sin^2
                 _angle = dir * (2.f * __progress - sinf(2.f * __progress));
               } else {
-                _y = y + jump * (1.f - powf((progress - .8f) / .2f, .5f));
+                _y = y + jump * (1.f - powf((progress - .8f) / .2f, 5.f));
               }
               sunFlower->setPosition(new MyPoint({_x, _y}));
               sunFlower->setAngle(_angle);
             },
-            // (int)(rowScale * 1000.f)));
             1000));
       } else {
         tl->add(new MyAnimation(
@@ -230,31 +221,13 @@ void init(void) {
               }
               sunFlower->setScale(sfScale * factor);
             },
-            // (int)(rowScale * 1000.f)));
             200));
       }
       tl->setRepeatFrame(2);
       tl->loop(true);
       tl->play();
     }
-    // std::cout << "\n";
-    // row->scale(rowScale);
     all.add(row);
-    // tl1->add(new MyAnimation(
-    //     [row, sfScale](float progress) {
-    //       float factor;
-    //       float thresh = .7f;
-    //       float expand = .3f;
-    //       if (progress < thresh) {
-    //         factor = (1.f + expand) * powf(progress / thresh, .5f);
-    //       } else {
-    //         factor = (1.f + expand) -
-    //                  expand * powf((progress - thresh) / (1 - thresh), 2.f);
-    //       }
-    //       row->setScale(sfScale * factor);
-    //     },
-    //     // (int)(rowScale * 1000.f)));
-    //     500));
   }
 
   MyRectangle *darkness = new MyRectangle(displayWidth, displayHeight);
@@ -277,7 +250,7 @@ void init(void) {
   tl2->setRepeatFrame(1); // start at 0
   tl2->add(new MyAnimation(
       [sun](float progress) {
-        sun->setScale(1.5f + .2f * sinf(2 * PI * progress));
+        sun->setScale(1.5f + .2f * sinf(TAU * progress));
       },
       10000));
 
