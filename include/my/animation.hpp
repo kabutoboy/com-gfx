@@ -7,15 +7,15 @@
 
 class MyAnimation {
 public:
-  MyAnimation(MyDrawable *, std::function<void(MyDrawable *, float)>, int);
-  // MyAnimation(MyDrawable *, void (*)(MyDrawable *, float), int);
+  MyAnimation(std::function<void(float)>, int);
+  // MyAnimation(MyDrawable *, std::function<void(MyDrawable *, float)>, int);
   bool update(int);
   void restart();
 
 protected:
-  MyDrawable *actor;
-  std::function<void(MyDrawable *, float)> action;
-  // void (*action)(MyDrawable *, float);
+  // MyDrawable *actor;
+  // std::function<void(MyDrawable *, float)> action;
+  std::function<void(float)> action;
   int elapsedTime;
   int totalTime;
 };

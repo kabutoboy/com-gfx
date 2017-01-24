@@ -2,16 +2,17 @@
 #define MY_TIMELINE_
 
 #include "animation.hpp"
+#include "playable.hpp"
 
-class MyTimeline {
+class MyTimeline : public MyPlayable {
 public:
   MyTimeline(int = 60);
-  void play();
-  void stop();
+  void play() override;
+  void stop() override;
   void loop(bool looping);
   void add(MyAnimation *);
   void setFrameRate(int);
-  bool update(int);
+  bool update(int) override;
 
 protected:
   std::vector<MyAnimation *> playlist;

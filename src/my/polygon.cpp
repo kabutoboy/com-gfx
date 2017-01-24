@@ -10,13 +10,14 @@ MyPolygon::MyPolygon() {
   position.assign({0, 0});
   scl = 1;
   angle = 0;
+  alpha = 1;
 }
 
 // NON-MODIFYING
 void MyPolygon::draw(float amount) {
   // glBegin(GL_LINES);
   glBegin(GL_POLYGON);
-  glColor3f(color.at(0), color.at(1), color.at(2));
+  glColor4f(color.at(0), color.at(1), color.at(2), alpha);
   std::vector<MyPoint> V(vertices);
   for (int i = 0, n = (int)(amount * (float)V.size()); i < n; i++) {
     auto &v = V.at(i);
@@ -46,12 +47,14 @@ void MyPolygon::draw(float amount) {
 
 // MODIFYING
 void MyPolygon::setColor(int hex) {
-  color.assign({(float)(0xFF & (hex >> 16)) / 255.f,
-                (float)(0xFF & (hex >> 8)) / 255.f,
-                (float)(0xFF & (hex)) / 255.f});
+  this->setColor((float)(0xFF & (hex >> 16)) / 255.f,
+                 (float)(0xFF & (hex >> 8)) / 255.f,
+                 (float)(0xFF & (hex)) / 255.f);
 }
 
 void MyPolygon::setColor(float r, float g, float b) { color.assign({r, g, b}); }
+
+void MyPolygon::setAlpha(float a) { this->alpha = a; }
 
 void MyPolygon::setPosition(float x, float y) { position.assign({x, y}); }
 

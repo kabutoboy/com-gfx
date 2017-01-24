@@ -7,12 +7,13 @@
 #include "my/mathconst.hpp"
 #include "my/point.hpp"
 #include "my/rectangle.hpp"
+#include "my/scene.hpp"
 #include "my/sunflower.hpp"
 #include "my/timeline.hpp"
 #include <GL/glut.h>
 
 MyGroup all;
-MyTimeline timeline;
+MyScene scene;
 
 int displayWidth = 600;
 int displayHeight = 600;
@@ -60,7 +61,7 @@ void init(void) {
   // MySunFlower *sunFlower = new MySunFlower(.6f, 0, new MyPoint({0, 100}));
   // all.add(sunFlower);
   //
-  // timeline.add(new MyAnimation(sunFlower,
+  // tl1->add(new MyAnimation(sunFlower,
   //                              [](auto *sf, float progress) {
   //                               //  std::cout << progress << "\n";
   //                                sf->setScale(progress);
@@ -104,10 +105,15 @@ void init(void) {
   grass->translate(new MyPoint({0, -100}));
   all.add(grass);
 
-  int m = 20, n = 80;
+  MyTimeline *tl1 = new MyTimeline();
+  scene.add(tl1);
+  tl1->play();
 
+  std::vector<MyGroup *> sunFlowerRows;
+  int m = 20, n = 80;
   for (int i = 0; i < m; i++) {
     MyGroup *row = new MyGroup();
+    sunFlowerRows.push_back(row);
     float r = MySunFlower::RADIUS;
     float scl = displayWidth / (2 * r) / n * 8;
     float rowScale = (float)(i + 1) / (float)m;
@@ -129,24 +135,39 @@ void init(void) {
       //   sf->setScale(displayScale * progress);
       //   // sf->scale(0.5f);
       // };
-      // timeline.add(new MyAnimation(sunFlower, fn, (int)(rowScale * 100.f)));
+      // tl1->add(new MyAnimation(sunFlower, fn, (int)(rowScale * 100.f)));
     }
     // std::cout << "\n";
     // row->scale(rowScale);
     all.add(row);
-    auto fn = [displayScale](MyDrawable *row, float progress) {
-      //  std::cout << progress << "\n";
-      row->setScale(displayScale * progress);
-      // sf->scale(0.5f);
-    };
-    timeline.add(new MyAnimation(row, fn, (int)(rowScale * 1000.f)));
+    tl1->add(new MyAnimation(
+        [row, displayScale](float progress) {
+          row->setScale(displayScale * progress);
+        },
+        (int)(rowScale * 1000.f)));
   }
+
+  MyRectangle *darkness = new MyRectangle(600, 600);
+  darkness->setColor(0x000000);
+  darkness->setAlpha(.5f);
+  all.add(darkness);
+
+  MyTimeline *tl2 = new MyTimeline();
+  scene.add(tl2);
+  tl2->play();
+
+  tl2->add(new MyAnimation(
+      [sun, darkness](float progress) {
+        sun->setScale(1 * progress);
+        darkness->setAlpha(.5f - .5f * progress);
+      },
+      5000));
 
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
   elapsedTime = 0;
 
-  timeline.loop(true);
-  timeline.play();
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
 }
 
 void draw() {
@@ -155,7 +176,7 @@ void draw() {
   // elapsedTime += deltaTime;
   lastTime = currentTime;
 
-  timeline.update(deltaTime);
+  scene.update(deltaTime);
 
   // if (elapsedTime >= frameTime) {// next frame
   // ++currentFrame;

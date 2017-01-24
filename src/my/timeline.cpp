@@ -1,5 +1,4 @@
 #include "my/timeline.hpp"
-#include <iostream>
 
 MyTimeline::MyTimeline(int frameRate) {
   this->setFrameRate(frameRate);
