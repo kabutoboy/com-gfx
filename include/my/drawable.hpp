@@ -13,6 +13,9 @@ public:
   virtual void setScale(float) = 0;
   virtual void setAngle(float) = 0;
   virtual void setPosition(MyPoint *) = 0;
+  virtual void embedScale() = 0;
+  virtual void embedAngle() = 0;
+  virtual void embedPosition() = 0;
 };
 
 #endif // ifndef MY_DRAWABLE_

@@ -38,10 +38,6 @@ void MyPolygon::draw(float amount) {
     y = center_y + this->scl * (y - center_y);
     glVertex2f(x, y);
   }
-  // for (int i = 0, n = (int)(amount * (float)vertices.size()); i < n; i++) {
-  //   auto &v = vertices.at(i);
-  //   glVertex2f(v.at(0), v.at(1));
-  // }
   glEnd();
 }
 
@@ -58,30 +54,39 @@ void MyPolygon::setAlpha(float a) { this->alpha = a; }
 
 void MyPolygon::setPosition(float x, float y) { position.assign({x, y}); }
 
-void MyPolygon::scale(float amount) {
-  this->scl *= amount;
-  // MyPoint *pos = &position;
-  // for_each(vertices.begin(), vertices.end(),
-  //          [amount, pos](MyPoint &v) { v.scale(amount, pos); });
-}
+void MyPolygon::scale(float amount) { this->scl *= amount; }
 
-void MyPolygon::rotate(float amount) {
-  this->angle += amount;
-  // for_each(vertices.begin(), vertices.end(), [amount](MyPoint &v) {
-  //   float x = v.at(0), y = v.at(1);
-  //   v.set(0, x * cosf(amount) - y * sinf(amount));
-  //   v.set(1, x * sinf(amount) + y * cosf(amount));
-  // });
-}
+void MyPolygon::rotate(float amount) { this->angle += amount; }
 
-void MyPolygon::translate(MyPoint *amount) {
-  this->position.add(amount);
-  // for_each(vertices.begin(), vertices.end(),
-  //          [amount](MyPoint &v) { v.add(amount); });
-}
+void MyPolygon::translate(MyPoint *amount) { this->position.add(amount); }
 
 void MyPolygon::setScale(float amount) { this->scl = amount; }
 
 void MyPolygon::setAngle(float amount) { this->angle = amount; }
 
 void MyPolygon::setPosition(MyPoint *amount) { this->position = *amount; }
+
+void MyPolygon::embedScale() {
+  float amount = this->scl;
+  MyPoint *pos = &this->position;
+  for_each(vertices.begin(), vertices.end(),
+           [amount, pos](MyPoint &v) { v.scale(amount, pos); });
+  this->scl = 1;
+}
+
+void MyPolygon::embedAngle() {
+  float amount = this->angle;
+  for_each(vertices.begin(), vertices.end(), [amount](MyPoint &v) {
+    float x = v.at(0), y = v.at(1);
+    v.set(0, x * cosf(amount) - y * sinf(amount));
+    v.set(1, x * sinf(amount) + y * cosf(amount));
+  });
+  this->angle = 0;
+}
+
+void MyPolygon::embedPosition() {
+  MyPoint *amount = &this->position;
+  for_each(vertices.begin(), vertices.end(),
+           [amount](MyPoint &v) { v.add(amount); });
+  this->position.assign({0, 0});
+}

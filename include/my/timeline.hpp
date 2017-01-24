@@ -12,11 +12,13 @@ public:
   void loop(bool looping);
   void add(MyAnimation *);
   void setFrameRate(int);
+  void setRepeatFrame(int);
   bool update(int) override;
 
 protected:
   std::vector<MyAnimation *> playlist;
   int index;
+  int repeatAt;
   int frameRate;
   int frameTime;
   int elapsedTime;

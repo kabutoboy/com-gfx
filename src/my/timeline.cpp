@@ -7,6 +7,7 @@ MyTimeline::MyTimeline(int frameRate) {
   this->looping = false;
   this->finished = false;
   this->index = 0;
+  this->repeatAt = 0;
 }
 
 void MyTimeline::play() { playing = true; }
@@ -21,6 +22,8 @@ void MyTimeline::setFrameRate(int frameRate) {
   this->frameRate = frameRate;
   this->frameTime = 1000 / frameRate;
 }
+
+void MyTimeline::setRepeatFrame(int i) { this->repeatAt = i; }
 
 bool MyTimeline::update(int deltaTime) {
   if (finished) {
@@ -42,7 +45,7 @@ bool MyTimeline::update(int deltaTime) {
           playing = false;
           return true;
         }
-        index = 0;
+        index = repeatAt;
       }
       playlist.at(index)->restart();
     }
