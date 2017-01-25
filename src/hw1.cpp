@@ -19,8 +19,8 @@ MyScene scene;
 
 int displayWidth = 1200;
 int displayHeight = 600;
-float halfDisplayWidth = .5f * (float)displayWidth;
-float halfDisplayHeight = .5f * (float)displayHeight;
+float halfDisplayWidth = 0.5f * (float)displayWidth;
+float halfDisplayHeight = 0.5f * (float)displayHeight;
 
 int frameRate = 60;
 int frameTime = 1000 / frameRate;
@@ -31,6 +31,8 @@ int elapsedTime;
 void init(void) {
   std::srand(std::time(0));
 
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
   glClearColor(0.2, 0.2, 0.3, 1.0);
   gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
              halfDisplayHeight);
@@ -40,21 +42,18 @@ void init(void) {
   all.add(sky);
 
   MyCircle *sunGlow3 = new MyCircle(130, 130);
-  // sunGlow3->setColor(0xc0e7f9);
   sunGlow3->setColor(0xffffff);
-  sunGlow3->setAlpha(.3f);
+  sunGlow3->setAlpha(0.3f);
   sunGlow3->translate(new MyPoint({0, 100}));
 
   MyCircle *sunGlow2 = new MyCircle(100, 100);
-  // sunGlow2->setColor(0xdef2fc);
   sunGlow2->setColor(0xffffff);
-  sunGlow2->setAlpha(.4f);
+  sunGlow2->setAlpha(0.4f);
   sunGlow2->translate(new MyPoint({0, 100}));
 
   MyCircle *sunGlow1 = new MyCircle(80, 80);
-  // sunGlow1->setColor(0xf0f9fe);
   sunGlow1->setColor(0xffffff);
-  sunGlow1->setAlpha(.5f);
+  sunGlow1->setAlpha(0.5f);
   sunGlow1->translate(new MyPoint({0, 100}));
 
   MyCircle *sunCenter = new MyCircle(70, 70);
@@ -82,11 +81,11 @@ void init(void) {
   cloud21->embedPosition();
 
   MyGroup *cloud2 = new MyGroup();
-  MyPoint *cloud2pos = new MyPoint({300, 280});
+  MyPoint *cloud2pos = new MyPoint({400, 280});
   cloud2->add(cloud22);
   cloud2->add(cloud21);
   cloud2->translate(cloud2pos);
-  cloud2->scale(3.f);
+  cloud2->scale(2.0f);
   all.add(cloud2);
 
   MyTimeline *tl = new MyTimeline();
@@ -94,7 +93,7 @@ void init(void) {
   tl->add(new MyAnimation(
       [cloud2, cloud2pos, sunPos](float progress) {
         MyPoint *pos = cloud2pos->copy();
-        pos->scale(1.f + .1f * sinf(TAU * progress), sunPos);
+        pos->scale(0.5f + 0.1f * sinf(TAU * progress), sunPos);
         cloud2->setPosition(pos);
       },
       8000));
@@ -116,7 +115,7 @@ void init(void) {
   cloud1->add(cloud12);
   cloud1->add(cloud11);
   cloud1->translate(cloud1pos);
-  cloud1->scale(3.f);
+  cloud1->scale(2.0f);
   all.add(cloud1);
 
   tl = new MyTimeline();
@@ -124,7 +123,7 @@ void init(void) {
   tl->add(new MyAnimation(
       [cloud1, cloud1pos, sunPos](float progress) {
         MyPoint *pos = cloud1pos->copy();
-        pos->scale(1.f + .1f * sinf(TAU * progress), sunPos);
+        pos->scale(0.7f + 0.1f * sinf(TAU * progress), sunPos);
         cloud1->setPosition(pos);
       },
       8000));
@@ -133,52 +132,62 @@ void init(void) {
 
   MyRectangle *grass = new MyRectangle(displayWidth, 100 + halfDisplayHeight);
   grass->setColor(0x67754c);
-  grass->translate(new MyPoint({0, -.5f * (float)(-100 + halfDisplayHeight)}));
+  grass->translate(new MyPoint({0, -0.5f * (-100.0f + halfDisplayHeight)}));
   all.add(grass);
 
-  std::vector<MyGroup *> sunFlowerRows;
-  int m = 12, n = 80;
+  int m = 12;
+  int n = 80;
+  float r = MySunFlower::RADIUS;
+  float d = 2.0f * r;
+  float scl = 8.0f * displayWidth / (d * n);
   for (int i = 0; i < m; i++) {
     MyGroup *row = new MyGroup();
-    sunFlowerRows.push_back(row);
-    float r = MySunFlower::RADIUS;
-    float scl = displayWidth / (2 * r) / n * 8;
-    float rowScale = .1f + .9f * powf((float)(i + 1) / (float)m, .7f);
+    float rowScale = 0.1f + 0.9f * powf((float)(i + 1) / (float)m, 0.7f);
     float sfScale = scl * rowScale;
 
     for (int j = 0; j < n; j++) {
       // std::cout << rowScale * scl << " ";
-      float x = scl * 2 * r * (n / 2 - j) * rowScale;
+      float x = scl * d * (n / 2 - j) * rowScale;
       float y =
-          100.f -
-          powf((float)i / (float)(m - 1), 2.f) * (halfDisplayHeight + 100.f);
+          100.0f -
+          powf((float)i / (float)(m - 1), 2.0f) * (halfDisplayHeight + 100.0f);
       if (x < -halfDisplayWidth - sfScale * r ||
           x > halfDisplayWidth + sfScale * r ||
           y < -halfDisplayHeight - sfScale * r ||
           y > halfDisplayHeight + sfScale * r) {
         continue;
       }
-      MySunFlower *sunFlower =
-          new MySunFlower{0, TAU * (i + j) / (m + n), new MyPoint({x, y})};
+      MySunFlower *sunFlower = new MySunFlower{
+          0, TAU * (float)(i + j) / (float)(m + n), new MyPoint({x, y})};
+      float minRowScale = (0.1f + 0.9f * powf(1.0f / (float)m, 0.7f));
+      // normalize
+      float scaleColorIntensity =
+          1.0f - (sfScale - scl * minRowScale) / (scl * (1.0f - minRowScale));
+      // stretch and shift
+      scaleColorIntensity = 0.0f + powf(0.6f * scaleColorIntensity, 2.0f);
+      sunFlower->scaleColor(0x000000, scaleColorIntensity);
+      // std::cout << "scl: " << scl << ", rowScale: " << rowScale
+      //           << ", scaleColorIntensity " << scaleColorIntensity << "\n";
       row->add(sunFlower);
       MyTimeline *tl = new MyTimeline();
       scene.add(tl);
       // wait
       tl->add(new MyAnimation(
           [](float progress) {},
-          (int)(powf(abs((float)j - .5f * n) / (.5f * n), 1.5f) * 20000.f +
-                powf((float)i / (float)m, 2.f) * 6000.f)));
+          (int)(powf(abs((float)j - 0.5f * n) / (0.5f * n), 1.5f) * 20000.0f +
+                powf((float)i / (float)m, 2.0f) * 4000.0f)));
       // animation
       tl->add(new MyAnimation(
           [sunFlower, sfScale](float progress) {
             float factor;
-            float thresh = .7f;
-            float expand = .3f;
+            float thresh = 0.7f;
+            float expand = 0.3f;
             if (progress < thresh) {
-              factor = (1.f + expand) * powf(progress / thresh, .5f);
+              factor = (1.0f + expand) * powf(progress / thresh, 0.5f);
             } else {
-              factor = (1.f + expand) -
-                       expand * powf((progress - thresh) / (1 - thresh), 2.f);
+              factor =
+                  (1.0f + expand) -
+                  expand * powf((progress - thresh) / (1.0f - thresh), 2.0f);
             }
             sunFlower->setScale(sfScale * factor);
           },
@@ -192,20 +201,24 @@ void init(void) {
         tl->add(new MyAnimation(
             [sunFlower, sfScale, x, y, dir](float progress) {
               float factor;
-              float jump = sfScale * 300.f;
+              float jump = sfScale * 300.0f;
               float _x = x;
               float _y = y;
               float _angle = 0;
-              if (progress < .2f) {
-                _y = y + jump * powf(progress / .2f, .2f);
-              } else if (progress < .8f) {
+              if (progress < 0.2f) {
+                float _progress = progress / 0.2f;
+                _y += jump * powf(_progress, 0.2f);
+              } else if (progress < 0.8f) {
                 _y = y + jump;
-                float _progress = (progress - .2f) / .6f;
+                // normalize
+                float _progress = (progress - 0.2f) / 0.6f;
+                // scale
                 float __progress = PI * _progress;
                 // integral of sin^2
-                _angle = dir * (2.f * __progress - sinf(2.f * __progress));
+                _angle = dir * (2.0f * __progress - sinf(2.0f * __progress));
               } else {
-                _y = y + jump * (1.f - powf((progress - .8f) / .2f, 5.f));
+                float _progress = (progress - 0.8f) / 0.2f;
+                _y += jump * (1.0f - powf(_progress, 5.0f));
               }
               sunFlower->setPosition(new MyPoint({_x, _y}));
               sunFlower->setAngle(_angle);
@@ -214,14 +227,15 @@ void init(void) {
       } else {
         tl->add(new MyAnimation(
             [sunFlower, sfScale](float progress) {
-              float factor;
-              float thresh = .5f;
-              float expand = .2f;
+              float factor = 1.0f;
+              float thresh = 0.5f;
+              float expand = 0.2f;
               if (progress < thresh) {
-                factor = 1.f + expand * powf(progress / thresh, .5f);
+                factor += expand * powf(progress / thresh, 0.5f);
               } else {
-                factor = (1.f + expand) -
-                         expand * powf((progress - thresh) / (1 - thresh), 2.f);
+                factor +=
+                    expand *
+                    (1.0f - powf((progress - thresh) / (1.0f - thresh), 2.0f));
               }
               sunFlower->setScale(sfScale * factor);
             },
@@ -236,7 +250,7 @@ void init(void) {
 
   MyRectangle *darkness = new MyRectangle(displayWidth, displayHeight);
   darkness->setColor(0x000000);
-  darkness->setAlpha(.7f);
+  darkness->setAlpha(0.7f);
   all.add(darkness);
 
   MyTimeline *tl2 = new MyTimeline();
@@ -246,7 +260,7 @@ void init(void) {
   tl2->add(new MyAnimation(
       [sun, darkness](float progress) {
         sun->setScale(1.5f * progress);
-        darkness->setAlpha(.7f - .7f * progress);
+        darkness->setAlpha(0.7f - 0.7f * progress);
       },
       5000));
 
@@ -254,7 +268,7 @@ void init(void) {
   tl2->setRepeatFrame(1); // start at 0
   tl2->add(new MyAnimation(
       [sun](float progress) {
-        sun->setScale(1.5f + .2f * sinf(TAU * progress));
+        sun->setScale(1.5f + 0.2f * sinf(TAU * progress));
       },
       10000));
 
@@ -265,7 +279,6 @@ void init(void) {
 }
 
 void update() {
-
   currentTime = glutGet(GLUT_ELAPSED_TIME);
   int deltaTime = currentTime - lastTime;
   lastTime = currentTime;
@@ -279,7 +292,7 @@ void update() {
 
 void draw() { all.draw(); }
 
-void display() {
+void onDisplay() {
   glClear(GL_COLOR_BUFFER_BIT);
   update();
   draw();
@@ -287,7 +300,7 @@ void display() {
   glutSwapBuffers();
 }
 
-void redisplay() { glutPostRedisplay(); }
+void onRedisplay() { glutPostRedisplay(); }
 
 void onMouse(int button, int state, int x, int y) {
   switch (button) {
@@ -305,11 +318,9 @@ int main(int argc, char **argv) {
   glutInitWindowSize(displayWidth, displayHeight);
   glutInitWindowPosition(0, 0);
   glutCreateWindow("Test OpenGL");
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_BLEND);
   init();
-  glutDisplayFunc(display);
-  glutIdleFunc(redisplay);
+  glutDisplayFunc(onDisplay);
+  glutIdleFunc(onRedisplay);
   glutMouseFunc(onMouse);
   glutMainLoop();
   return 0;

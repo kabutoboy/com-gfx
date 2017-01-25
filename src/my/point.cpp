@@ -87,3 +87,9 @@ MyPoint *MyPoint::sub(MyPoint *a, MyPoint *b) { return b->copy()->sub(b); }
 MyPoint *MyPoint::subAbs(MyPoint *a, MyPoint *b) {
   return b->copy()->sub(b)->abs();
 }
+
+MyPoint *MyPoint::rgb(int hex) {
+  return new MyPoint({(float)(0xFF & (hex >> 16)) / 255.f,
+                      (float)(0xFF & (hex >> 8)) / 255.f,
+                      (float)(0xFF & (hex)) / 255.f});
+}

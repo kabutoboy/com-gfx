@@ -12,9 +12,11 @@ public:
   void draw(float = 1) override;
 
   // MODIFYING
-  void setColor(int);
+  void setColor(int) override;
   void setColor(float, float, float);
-  void setAlpha(float);
+  void setColor(MyPoint *);
+  void scaleColor(int, float) override;
+  void setAlpha(float) override;
   void setPosition(float, float);
   void scale(float) override;
   void rotate(float) override;
