@@ -15,6 +15,9 @@ public:
   void setScale(float) override;
   void setAngle(float) override;
   void setPosition(MyPoint *) override;
+  void setAlpha(float) override;
+  void setColor(int) override;
+  void scaleColor(int, float) override;
   void embedScale() override;
   void embedAngle() override;
   void embedPosition() override;

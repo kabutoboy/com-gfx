@@ -48,6 +48,25 @@ void MyGroup::setPosition(MyPoint *amount) {
   }
 }
 
+void MyGroup::setAlpha(float amount) {
+  for (auto &c : children) {
+    c->setAlpha(amount);
+  }
+}
+
+void MyGroup::setColor(int amount) {
+  for (auto &c : children) {
+    c->setColor(amount);
+  }
+}
+
+void MyGroup::scaleColor(int color, float intensity) {
+  for (auto &c : children) {
+    c->scaleColor(color, intensity);
+  }
+}
+
+
 void MyGroup::embedScale() {
   for (auto &c : children) {
     c->embedScale();

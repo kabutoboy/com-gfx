@@ -33,6 +33,7 @@ public:
   static MyPoint *add(MyPoint *, MyPoint *);
   static MyPoint *sub(MyPoint *, MyPoint *);
   static MyPoint *subAbs(MyPoint *, MyPoint *);
+  static MyPoint *rgb(int);
 
 protected:
   std::vector<float> data;
