@@ -14,6 +14,12 @@ void MyScene::stop() {
   };
 }
 
+void MyScene::toggle() {
+  for (auto &tl : timelines) {
+    tl->toggle();
+  };
+}
+
 void MyScene::add(MyTimeline *tl) { timelines.push_back(tl); }
 
 bool MyScene::update(int deltaTime) {

@@ -142,6 +142,7 @@ void init(void) {
   float scl = 8.0f * displayWidth / (d * n);
   for (int i = 0; i < m; i++) {
     MyGroup *row = new MyGroup();
+    row->useDrawLimit(false);
     float rowScale = 0.1f + 0.9f * powf((float)(i + 1) / (float)m, 0.7f);
     float sfScale = scl * rowScale;
 
@@ -195,7 +196,7 @@ void init(void) {
       // wait
       tl->add(new MyAnimation([](float progress) {}, 5000));
       // animation
-      int choice = std::rand() % 8;
+      int choice = std::rand() % 16;
       if (choice == 0) {
         int dir = std::rand() % 2 == 0 ? 1 : -1;
         tl->add(new MyAnimation(
@@ -224,6 +225,41 @@ void init(void) {
               sunFlower->setAngle(_angle);
             },
             1000));
+      } else if (choice == 1) {
+        tl->add(new MyAnimation(
+            [sunFlower, sfScale, x, y](float progress) {
+              float factor;
+              float jump = sfScale * 300.0f;
+              float _x = x;
+              float _y = y;
+              float _drawLimit = 1;
+              float _scale = 1;
+              if (progress < 0.1f) {
+                float _progress = progress / 0.1f;
+                _y += jump * powf(_progress, 0.2f);
+              } else if (progress < 0.2f) {
+                _y += jump;
+                float _progress = (progress - 0.1f) / 0.1f;
+                _scale = 1.0f - powf(_progress, 0.5f);
+              } else if (progress < 0.9f) {
+                _y += jump;
+                // normalize
+                float _progress = (progress - 0.2f) / 0.7f;
+                // scale
+                float __progress = PI * _progress;
+                // integral of sin^2
+                // _drawLimit = (2.0f * __progress - sinf(2.0f * __progress)) /
+                // TAU;
+                _drawLimit = _progress;
+              } else {
+                float _progress = (progress - 0.9f) / 0.1f;
+                _y += jump * (1.0f - powf(_progress, 5.0f));
+              }
+              sunFlower->setScale(sfScale * _scale);
+              sunFlower->setPosition(new MyPoint({_x, _y}));
+              sunFlower->limitDraw(_drawLimit);
+            },
+            2000));
       } else {
         tl->add(new MyAnimation(
             [sunFlower, sfScale](float progress) {
@@ -275,6 +311,7 @@ void init(void) {
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
   elapsedTime = 0;
 
+  all.useDrawLimit(false);
   scene.stop();
 }
 
@@ -303,12 +340,8 @@ void onDisplay() {
 void onRedisplay() { glutPostRedisplay(); }
 
 void onMouse(int button, int state, int x, int y) {
-  switch (button) {
-  case GLUT_LEFT_BUTTON:
-    scene.play();
-    break;
-  default:
-    break;
+  if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+    scene.toggle();
   }
 }
 

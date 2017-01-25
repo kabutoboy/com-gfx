@@ -9,6 +9,7 @@ public:
   MyTimeline(int = 60);
   void play() override;
   void stop() override;
+  void toggle() override;
   void loop(bool looping);
   void add(MyAnimation *);
   void setFrameRate(int);

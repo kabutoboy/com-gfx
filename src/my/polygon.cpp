@@ -10,15 +10,17 @@ MyPolygon::MyPolygon() {
   setScale(1);
   setAngle(0);
   setAlpha(1);
+  limitDraw(1);
+  useDrawLimit(true);
 }
 
 // NON-MODIFYING
-void MyPolygon::draw(float amount) {
+void MyPolygon::draw() {
   // glBegin(GL_LINES);
   glBegin(GL_POLYGON);
   glColor4f(color.at(0), color.at(1), color.at(2), alpha);
   std::vector<MyPoint> V(vertices);
-  int n = (int)(amount * (float)V.size());
+  int n = usingDrawLimit ? (int)(drawLimit * (float)V.size()) : V.size();
   for (int i = 0; i < n; i++) {
     auto &v = V.at(i);
     float x = v.at(0);
@@ -39,10 +41,10 @@ void MyPolygon::draw(float amount) {
   glEnd();
 }
 
+int MyPolygon::size() { return vertices.size(); }
+
 // MODIFYING
-void MyPolygon::setColor(int hex) {
-  this->setColor(MyPoint::rgb(hex));
-}
+void MyPolygon::setColor(int hex) { this->setColor(MyPoint::rgb(hex)); }
 
 void MyPolygon::setColor(float r, float g, float b) { color.assign({r, g, b}); }
 
@@ -52,9 +54,7 @@ void MyPolygon::scaleColor(int hex, float intensity) {
   this->color = *color;
 }
 
-void MyPolygon::setColor(MyPoint *color) {
-  this->color = *color;
-}
+void MyPolygon::setColor(MyPoint *color) { this->color = *color; }
 
 void MyPolygon::setAlpha(float a) { this->alpha = a; }
 
@@ -103,3 +103,7 @@ void MyPolygon::embedPosition() {
            [amount](MyPoint &v) { v.add(amount); });
   setPosition(0, 0);
 }
+
+void MyPolygon::limitDraw(float limit) { this->drawLimit = limit; }
+
+void MyPolygon::useDrawLimit(bool use) { this->usingDrawLimit = use; }
