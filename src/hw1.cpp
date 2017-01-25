@@ -259,6 +259,7 @@ void init(void) {
       10000));
 
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
+  elapsedTime = 0;
 
   scene.stop();
 }
