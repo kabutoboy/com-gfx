@@ -31,7 +31,7 @@ void init(void) {
   gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
              halfDisplayHeight);
 
-  MyCircle *myCircle = new MyCircle(70, 8);
+  auto *myCircle = new MyCircle(70, 8);
   myCircle->setColor(0xff0000);
   all.add(myCircle);
 
@@ -43,7 +43,6 @@ void init(void) {
       1000));
   tl->loop(true);
   scene.add(tl);
-
 
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
   elapsedTime = 0;
