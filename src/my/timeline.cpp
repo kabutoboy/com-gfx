@@ -1,3 +1,5 @@
+// #include <iostream>
+
 #include "my/timeline.hpp"
 
 MyTimeline::MyTimeline(int frameRate) {
@@ -35,6 +37,8 @@ bool MyTimeline::update(int deltaTime) {
   elapsedTime += deltaTime;
   if (elapsedTime >= frameTime) { // for capping fps
     // int elapsedFrames = elapsedTime / frameTime;
+    // std::cout << "elapsedTime: " << elapsedTime
+    //           << "ms, frameRate: " << (1000 / elapsedTime) << "fps\n";
     auto *anim = playlist.at(index);
     bool next = anim->update(elapsedTime);
     if (next) {

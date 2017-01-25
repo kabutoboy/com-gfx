@@ -64,6 +64,7 @@ void init(void) {
   sun->add(sunGlow2);
   sun->add(sunGlow1);
   sun->add(sunCenter);
+  sun->setScale(0);
 
   all.add(sun);
 
@@ -90,7 +91,7 @@ void init(void) {
   tl->add(new MyAnimation(
       [cloud2, cloud2pos, sunPos](float progress) {
         MyPoint *pos = cloud2pos->copy();
-        pos->scale(.9f + .1f * sinf(TAU * progress), sunPos);
+        pos->scale(1.f + .1f * sinf(TAU * progress), sunPos);
         cloud2->setPosition(pos);
       },
       8000));
@@ -120,7 +121,7 @@ void init(void) {
   tl->add(new MyAnimation(
       [cloud1, cloud1pos, sunPos](float progress) {
         MyPoint *pos = cloud1pos->copy();
-        pos->scale(.9f + .1f * sinf(TAU * progress), sunPos);
+        pos->scale(1.f + .1f * sinf(TAU * progress), sunPos);
         cloud1->setPosition(pos);
       },
       8000));
@@ -232,7 +233,7 @@ void init(void) {
 
   MyRectangle *darkness = new MyRectangle(displayWidth, displayHeight);
   darkness->setColor(0x000000);
-  darkness->setAlpha(.5f);
+  darkness->setAlpha(.7f);
   all.add(darkness);
 
   MyTimeline *tl2 = new MyTimeline();
@@ -242,7 +243,7 @@ void init(void) {
   tl2->add(new MyAnimation(
       [sun, darkness](float progress) {
         sun->setScale(1.5f * progress);
-        darkness->setAlpha(.5f - .5f * progress);
+        darkness->setAlpha(.7f - .7f * progress);
       },
       5000));
 
@@ -255,6 +256,8 @@ void init(void) {
       10000));
 
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
+
+  scene.stop();
 }
 
 void draw() {
@@ -276,17 +279,28 @@ void display() {
 
 void redisplay() { glutPostRedisplay(); }
 
+void onMouse(int button, int state, int x, int y) {
+  switch (button) {
+  case GLUT_LEFT_BUTTON:
+    scene.play();
+    break;
+  default:
+    break;
+  }
+}
+
 int main(int argc, char **argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowSize(displayWidth, displayHeight);
-  glutInitWindowPosition(100, 100);
+  glutInitWindowPosition(0, 0);
   glutCreateWindow("Test OpenGL");
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   init();
   glutDisplayFunc(display);
   glutIdleFunc(redisplay);
+  glutMouseFunc(onMouse);
   glutMainLoop();
   return 0;
 }

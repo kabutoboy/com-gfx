@@ -6,11 +6,14 @@
 
 MyPolygon::MyPolygon() {
   // vertices = {};
-  color.assign({0, 0, 0});
-  position.assign({0, 0});
-  scl = 1;
-  angle = 0;
-  alpha = 1;
+  setColor(0x000000);
+  setPosition(0, 0);
+  setScale(1);
+  setAngle(0);
+  setAlpha(1);
+  // scl = 1;
+  // angle = 0;
+  // alpha = 1;
 }
 
 // NON-MODIFYING
@@ -19,23 +22,26 @@ void MyPolygon::draw(float amount) {
   glBegin(GL_POLYGON);
   glColor4f(color.at(0), color.at(1), color.at(2), alpha);
   std::vector<MyPoint> V(vertices);
-  for (int i = 0, n = (int)(amount * (float)V.size()); i < n; i++) {
+  // float a = cosf(this->angle);
+  // float b = sinf(this->angle);
+  int n = (int)(amount * (float)V.size());
+  for (int i = 0; i < n; i++) {
     auto &v = V.at(i);
     float x = v.at(0);
     float y = v.at(1);
     // rotate first because we assume it is centered at (0, 0)
     float _x = x;
     float _y = y;
-    x = _x * cosf(this->angle) - _y * sinf(this->angle);
-    y = _x * sinf(this->angle) + _y * cosf(this->angle);
+    x = _x * this->angleCos - _y * this->angleSin;
+    y = _x * this->angleSin + _y * this->angleCos;
+    // x = _x * a - _y * b;
+    // y = _x * b + _y * a;
     // translate
     float center_x = this->position.at(0);
     float center_y = this->position.at(1);
-    x += center_x;
-    y += center_y;
     // scale
-    x = center_x + this->scl * (x - center_x);
-    y = center_y + this->scl * (y - center_y);
+    x = center_x + this->scl * x;
+    y = center_y + this->scl * y;
     glVertex2f(x, y);
   }
   glEnd();
@@ -56,13 +62,22 @@ void MyPolygon::setPosition(float x, float y) { position.assign({x, y}); }
 
 void MyPolygon::scale(float amount) { this->scl *= amount; }
 
-void MyPolygon::rotate(float amount) { this->angle += amount; }
+void MyPolygon::rotate(float amount) {
+  this->setAngle(this->angle + amount);
+  // this->angle += amount;
+  // this->angleCos = cosf(this->angle);
+  // this->angleSin = sinf(this->angle);
+}
 
 void MyPolygon::translate(MyPoint *amount) { this->position.add(amount); }
 
 void MyPolygon::setScale(float amount) { this->scl = amount; }
 
-void MyPolygon::setAngle(float amount) { this->angle = amount; }
+void MyPolygon::setAngle(float amount) {
+  this->angle = amount;
+  this->angleCos = cosf(this->angle);
+  this->angleSin = sinf(this->angle);
+}
 
 void MyPolygon::setPosition(MyPoint *amount) { this->position = *amount; }
 
@@ -71,7 +86,8 @@ void MyPolygon::embedScale() {
   MyPoint *pos = &this->position;
   for_each(vertices.begin(), vertices.end(),
            [amount, pos](MyPoint &v) { v.scale(amount, pos); });
-  this->scl = 1;
+  // this->scl = 1;
+  setScale(1);
 }
 
 void MyPolygon::embedAngle() {
@@ -81,12 +97,14 @@ void MyPolygon::embedAngle() {
     v.set(0, x * cosf(amount) - y * sinf(amount));
     v.set(1, x * sinf(amount) + y * cosf(amount));
   });
-  this->angle = 0;
+  // this->angle = 0;
+  setAngle(0);
 }
 
 void MyPolygon::embedPosition() {
   MyPoint *amount = &this->position;
   for_each(vertices.begin(), vertices.end(),
            [amount](MyPoint &v) { v.add(amount); });
-  this->position.assign({0, 0});
+  setPosition(0, 0);
+  // this->position.assign({0, 0});
 }

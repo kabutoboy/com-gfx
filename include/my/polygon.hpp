@@ -32,6 +32,8 @@ protected:
   MyPoint position;
   float scl;
   float angle;
+  float angleCos;
+  float angleSin;
   float alpha;
 };
 
