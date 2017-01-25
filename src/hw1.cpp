@@ -22,8 +22,11 @@ int displayHeight = 600;
 float halfDisplayWidth = .5f * (float)displayWidth;
 float halfDisplayHeight = .5f * (float)displayHeight;
 
+int frameRate = 60;
+int frameTime = 1000 / frameRate;
 int currentTime;
 int lastTime;
+int elapsedTime;
 
 void init(void) {
   std::srand(std::time(0));
@@ -256,22 +259,29 @@ void init(void) {
       10000));
 
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
+  elapsedTime = 0;
 
   scene.stop();
 }
 
-void draw() {
+void update() {
+
   currentTime = glutGet(GLUT_ELAPSED_TIME);
   int deltaTime = currentTime - lastTime;
   lastTime = currentTime;
 
-  scene.update(deltaTime);
-
-  all.draw();
+  elapsedTime += deltaTime;
+  if (elapsedTime >= frameTime) {
+    scene.update(elapsedTime);
+    elapsedTime = 0;
+  }
 }
+
+void draw() { all.draw(); }
 
 void display() {
   glClear(GL_COLOR_BUFFER_BIT);
+  update();
   draw();
   glFlush();
   glutSwapBuffers();

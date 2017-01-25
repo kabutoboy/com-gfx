@@ -34,13 +34,14 @@ bool MyTimeline::update(int deltaTime) {
   if (!playing) {
     return false;
   }
-  elapsedTime += deltaTime;
-  if (elapsedTime >= frameTime) { // for capping fps
+  // elapsedTime += deltaTime;
+  // if (elapsedTime >= frameTime) { // for capping fps
     // int elapsedFrames = elapsedTime / frameTime;
     // std::cout << "elapsedTime: " << elapsedTime
     //           << "ms, frameRate: " << (1000 / elapsedTime) << "fps\n";
     auto *anim = playlist.at(index);
-    bool next = anim->update(elapsedTime);
+    bool next = anim->update(deltaTime);
+    // bool next = anim->update(elapsedTime);
     if (next) {
       ++index;
       if (index >= playlist.size()) { // end of list
@@ -53,7 +54,7 @@ bool MyTimeline::update(int deltaTime) {
       }
       playlist.at(index)->restart();
     }
-    elapsedTime = 0;
-  }
+    // elapsedTime = 0;
+  // }
   return false;
 }
