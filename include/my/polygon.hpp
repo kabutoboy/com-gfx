@@ -9,7 +9,8 @@ public:
   MyPolygon();
 
   // NON-MODIFYING
-  void draw(float = 1) override;
+  void draw() override;
+  int size() override;
 
   // MODIFYING
   void setColor(int) override;
@@ -27,6 +28,8 @@ public:
   void embedScale() override;
   void embedAngle() override;
   void embedPosition() override;
+  void limitDraw(float) override;
+  void useDrawLimit(bool) override;
 
 protected:
   std::vector<MyPoint> vertices;
@@ -37,6 +40,8 @@ protected:
   float angleCos;
   float angleSin;
   float alpha;
+  float drawLimit;
+  bool usingDrawLimit;
 };
 
 #endif // ifndef MY_POLYGON_

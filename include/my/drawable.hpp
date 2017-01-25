@@ -5,7 +5,8 @@
 
 class MyDrawable {
 public:
-  virtual void draw(float = 1) = 0;
+  virtual void draw() = 0;
+  virtual int size() = 0;
   virtual void scale(float) = 0;
   virtual void rotate(float) = 0;
   virtual void translate(MyPoint *) = 0;
@@ -18,6 +19,8 @@ public:
   virtual void embedScale() = 0;
   virtual void embedAngle() = 0;
   virtual void embedPosition() = 0;
+  virtual void limitDraw(float) = 0;
+  virtual void useDrawLimit(bool) = 0;
 };
 
 #endif // ifndef MY_DRAWABLE_

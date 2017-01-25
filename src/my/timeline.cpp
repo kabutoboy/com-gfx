@@ -16,6 +16,8 @@ void MyTimeline::play() { playing = true; }
 
 void MyTimeline::stop() { playing = false; }
 
+void MyTimeline::toggle() { playing = !playing; }
+
 void MyTimeline::loop(bool looping) { this->looping = looping; }
 
 void MyTimeline::add(MyAnimation *anim) { playlist.push_back(anim); }

@@ -8,7 +8,8 @@ class MyGroup : public MyDrawable {
 public:
   MyGroup();
   void add(MyDrawable *);
-  void draw(float = 1) override;
+  void draw() override;
+  int size() override;
   void scale(float) override;
   void rotate(float) override;
   void translate(MyPoint *) override;
@@ -21,9 +22,14 @@ public:
   void embedScale() override;
   void embedAngle() override;
   void embedPosition() override;
+  void limitDraw(float) override;
+  void useDrawLimit(bool) override;
 
 protected:
   std::vector<MyDrawable *> children;
+  float drawLimit;
+  int totalVertices;
+  bool usingDrawLimit;
 };
 
 #endif // ifndef MY_GROUP_

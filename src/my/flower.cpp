@@ -5,7 +5,7 @@
 MyFlower::MyFlower(float r, float petals, int n) {
   if (n == 0) {
     // n = 2. * PI * r;
-    n = (int)(8.f * petals);
+    n = (int)(16.f * petals);
   }
 
   vertices.resize(n);

@@ -9,6 +9,7 @@ public:
   MyScene();
   void play() override;
   void stop() override;
+  void toggle() override;
   void add(MyTimeline *);
   bool update(int) override;
 
