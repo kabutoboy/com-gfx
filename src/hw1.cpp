@@ -293,7 +293,7 @@ int main(int argc, char **argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowSize(displayWidth, displayHeight);
-  glutInitWindowPosition(100, 100);
+  glutInitWindowPosition(0, 0);
   glutCreateWindow("Test OpenGL");
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
