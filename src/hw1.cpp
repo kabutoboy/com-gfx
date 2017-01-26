@@ -37,31 +37,31 @@ void init(void) {
   gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
              halfDisplayHeight);
 
-  MyRectangle *sky = new MyRectangle(displayWidth, displayHeight);
+  auto *sky = new MyRectangle(displayWidth, displayHeight);
   sky->setColor(0xafe0f7);
   all.add(sky);
 
-  MyCircle *sunGlow3 = new MyCircle(130, 130);
+  auto *sunGlow3 = new MyCircle(130, 130);
   sunGlow3->setColor(0xffffff);
   sunGlow3->setAlpha(0.3f);
   sunGlow3->translate(new MyPoint({0, 100}));
 
-  MyCircle *sunGlow2 = new MyCircle(100, 100);
+  auto *sunGlow2 = new MyCircle(100, 100);
   sunGlow2->setColor(0xffffff);
   sunGlow2->setAlpha(0.4f);
   sunGlow2->translate(new MyPoint({0, 100}));
 
-  MyCircle *sunGlow1 = new MyCircle(80, 80);
+  auto *sunGlow1 = new MyCircle(80, 80);
   sunGlow1->setColor(0xffffff);
   sunGlow1->setAlpha(0.5f);
   sunGlow1->translate(new MyPoint({0, 100}));
 
-  MyCircle *sunCenter = new MyCircle(70, 70);
+  auto *sunCenter = new MyCircle(70, 70);
   MyPoint *sunPos = new MyPoint({0, 100});
   sunCenter->setColor(0xffffff);
   sunCenter->translate(sunPos);
 
-  MyGroup *sun = new MyGroup();
+  auto *sun = new MyGroup();
   sun->add(sunGlow3);
   sun->add(sunGlow2);
   sun->add(sunGlow1);
@@ -70,25 +70,25 @@ void init(void) {
 
   all.add(sun);
 
-  MyEllipse *cloud22 = new MyEllipse(30, 15, 70);
+  auto *cloud22 = new MyEllipse(30, 15, 70);
   cloud22->setColor(0xfffffc);
   cloud22->translate(new MyPoint({40, 0}));
   cloud22->embedPosition();
 
-  MyEllipse *cloud21 = new MyEllipse(40, 20, 70);
+  auto *cloud21 = new MyEllipse(40, 20, 70);
   cloud21->setColor(0xfffffc);
   cloud21->translate(new MyPoint({0, 10}));
   cloud21->embedPosition();
 
-  MyGroup *cloud2 = new MyGroup();
-  MyPoint *cloud2pos = new MyPoint({400, 280});
+  auto *cloud2 = new MyGroup();
+  auto *cloud2pos = new MyPoint({400, 280});
   cloud2->add(cloud22);
   cloud2->add(cloud21);
   cloud2->translate(cloud2pos);
   cloud2->scale(2.0f);
   all.add(cloud2);
 
-  MyTimeline *tl = new MyTimeline();
+  auto *tl = new MyTimeline();
   scene.add(tl);
   tl->add(new MyAnimation(
       [cloud2, cloud2pos, sunPos](float progress) {
@@ -100,18 +100,18 @@ void init(void) {
   tl->loop(true);
   tl->play();
 
-  MyEllipse *cloud12 = new MyEllipse(50, 20, 70);
+  auto *cloud12 = new MyEllipse(50, 20, 70);
   cloud12->setColor(0xfffffc);
   cloud12->translate(new MyPoint({-50, 0}));
   cloud12->embedPosition();
 
-  MyEllipse *cloud11 = new MyEllipse(40, 20, 70);
+  auto *cloud11 = new MyEllipse(40, 20, 70);
   cloud11->setColor(0xfffffc);
   cloud11->translate(new MyPoint({0, 10}));
   cloud12->embedPosition();
 
-  MyGroup *cloud1 = new MyGroup();
-  MyPoint *cloud1pos = new MyPoint({-320, 240});
+  auto *cloud1 = new MyGroup();
+  auto *cloud1pos = new MyPoint({-320, 240});
   cloud1->add(cloud12);
   cloud1->add(cloud11);
   cloud1->translate(cloud1pos);
@@ -130,7 +130,7 @@ void init(void) {
   tl->loop(true);
   tl->play();
 
-  MyRectangle *grass = new MyRectangle(displayWidth, 100 + halfDisplayHeight);
+  auto *grass = new MyRectangle(displayWidth, 100 + halfDisplayHeight);
   grass->setColor(0x67754c);
   grass->translate(new MyPoint({0, -0.5f * (-100.0f + halfDisplayHeight)}));
   all.add(grass);
@@ -141,7 +141,7 @@ void init(void) {
   float d = 2.0f * r;
   float scl = 8.0f * displayWidth / (d * n);
   for (int i = 0; i < m; i++) {
-    MyGroup *row = new MyGroup();
+    auto *row = new MyGroup();
     row->useDrawLimit(false);
     float rowScale = 0.1f + 0.9f * powf((float)(i + 1) / (float)m, 0.7f);
     float sfScale = scl * rowScale;
@@ -158,7 +158,7 @@ void init(void) {
           y > halfDisplayHeight + sfScale * r) {
         continue;
       }
-      MySunFlower *sunFlower = new MySunFlower{
+      auto *sunFlower = new MySunFlower{
           0, TAU * (float)(i + j) / (float)(m + n), new MyPoint({x, y})};
       float minRowScale = (0.1f + 0.9f * powf(1.0f / (float)m, 0.7f));
       // normalize
@@ -170,7 +170,7 @@ void init(void) {
       // std::cout << "scl: " << scl << ", rowScale: " << rowScale
       //           << ", scaleColorIntensity " << scaleColorIntensity << "\n";
       row->add(sunFlower);
-      MyTimeline *tl = new MyTimeline();
+      tl = new MyTimeline();
       scene.add(tl);
       // wait
       tl->add(new MyAnimation(
@@ -248,9 +248,8 @@ void init(void) {
                 // scale
                 float __progress = PI * _progress;
                 // integral of sin^2
-                // _drawLimit = (2.0f * __progress - sinf(2.0f * __progress)) /
-                // TAU;
-                _drawLimit = _progress;
+                _drawLimit = (2.0f * __progress - sinf(2.0f * __progress)) / TAU;
+                // _drawLimit = _progress;
               } else {
                 float _progress = (progress - 0.9f) / 0.1f;
                 _y += jump * (1.0f - powf(_progress, 5.0f));
@@ -284,25 +283,25 @@ void init(void) {
     all.add(row);
   }
 
-  MyRectangle *darkness = new MyRectangle(displayWidth, displayHeight);
+  auto *darkness = new MyRectangle(displayWidth, displayHeight);
   darkness->setColor(0x000000);
   darkness->setAlpha(0.7f);
   all.add(darkness);
 
-  MyTimeline *tl2 = new MyTimeline();
-  scene.add(tl2);
-  tl2->play();
+  tl = new MyTimeline();
+  scene.add(tl);
+  tl->play();
 
-  tl2->add(new MyAnimation(
+  tl->add(new MyAnimation(
       [sun, darkness](float progress) {
         sun->setScale(1.5f * progress);
         darkness->setAlpha(0.7f - 0.7f * progress);
       },
       5000));
 
-  tl2->loop(true);
-  tl2->setRepeatFrame(1); // start at 0
-  tl2->add(new MyAnimation(
+  tl->loop(true);
+  tl->setRepeatFrame(1); // start at 0
+  tl->add(new MyAnimation(
       [sun](float progress) {
         sun->setScale(1.5f + 0.2f * sinf(TAU * progress));
       },
