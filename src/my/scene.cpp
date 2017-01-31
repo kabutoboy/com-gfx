@@ -23,7 +23,10 @@ void MyScene::toggle() {
 void MyScene::add(MyTimeline *tl) { timelines.push_back(tl); }
 
 bool MyScene::update(int deltaTime) {
+  bool allFinished = true;
   for (auto &tl : timelines) {
-    tl->update(deltaTime);
+    bool finished = tl->update(deltaTime);
+    allFinished = allFinished && finished;
   }
+  return allFinished;
 }
