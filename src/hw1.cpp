@@ -24,9 +24,11 @@ float halfDisplayHeight = 0.5f * (float)displayHeight;
 
 int frameRate = 60;
 int frameTime = 1000 / frameRate;
+int frameCount = 0;
 int currentTime;
 int lastTime;
 int elapsedTime;
+int elapsedTime2;
 
 void init(void) {
   std::srand(std::time(0));
@@ -320,13 +322,22 @@ void update() {
   lastTime = currentTime;
 
   elapsedTime += deltaTime;
+  elapsedTime2 += deltaTime;
   if (elapsedTime >= frameTime) {
     scene.update(elapsedTime);
     elapsedTime = 0;
   }
+  if (elapsedTime2 >= 1000) {
+    std::cout << frameCount << "fps\n";
+    frameCount = 0;
+    elapsedTime2 = 0;
+  }
 }
 
-void draw() { all.draw(); }
+void draw() {
+  all.draw(); 
+  frameCount++;
+}
 
 void onDisplay() {
   glClear(GL_COLOR_BUFFER_BIT);
