@@ -9,6 +9,7 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 # How to recursively find all files that match a pattern
 # ALL_HTMLS := $(call rwildcard,foo/,*.html)
 
+HPP := $(call rwildcard,include/,*.hpp)
 SRC := $(call rwildcard,src/,*.cpp)
 OBJ = $(subst src,obj,$(subst .cpp,.o,$(SRC)))
 MY_SRC := $(call rwildcard,src/my/,*.cpp)
@@ -18,13 +19,17 @@ MY_OBJ = $(subst src,obj,$(subst .cpp,.o,$(MY_SRC)))
 
 all : $(OBJ)
 
+bin/% : obj/%.o $(MY_OBJ)
+	mkdir -p $(dir $@)
+	g++ -o "$@" $^ -lGL -lGLU -lglut -std=c++14
+
 bin/%.exe : obj/%.o $(MY_OBJ)
 	g++ -o "$@" $^ -L"lib\x64" -lfreeglut -lopengl32 -lglu32 -std=c++14
 
-obj/%.o : src/%.cpp include/%.hpp
-	if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
+obj/%.o : src/%.cpp $(HPP)
+	mkdir -p $(dir $@)
 	g++ -c -o "$@" "$<" -I"include" -std=c++14
 
-obj/%.o : src/%.cpp # include/%.hpp
-	if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
-	g++ -c -o "$@" "$<" -I"include" -std=c++14
+# obj/%.o : src/%.cpp # include/%.hpp
+# 	mkdir -p $(dir $@)
+# 	g++ -c -o "$@" "$<" -I"include" -std=c++14
