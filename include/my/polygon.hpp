@@ -30,8 +30,11 @@ public:
   void embedPosition() override;
   void limitDraw(float) override;
   void useDrawLimit(bool) override;
+  MyPoint *getPosition() override;
 
 protected:
+  int id;
+  bool changed;
   std::vector<MyPoint> vertices;
   MyPoint color;
   MyPoint position;

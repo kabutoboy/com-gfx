@@ -6,6 +6,7 @@
 #include "my/circle.hpp"
 #include "my/ellipse.hpp"
 #include "my/group.hpp"
+#include "my/man.hpp"
 #include "my/mathconst.hpp"
 #include "my/point.hpp"
 #include "my/rectangle.hpp"
@@ -36,8 +37,8 @@ void init(void) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   glClearColor(0.2, 0.2, 0.3, 1.0);
-  gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
-             halfDisplayHeight);
+  // gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
+  //            halfDisplayHeight);
 
   auto sky = new MyRectangle(displayWidth, displayHeight);
   sky->setColor(0xafe0f7);
@@ -309,6 +310,31 @@ void init(void) {
       },
       10000));
 
+  auto man1 = new MyMan();
+  all.add(man1);
+
+  tl = new MyTimeline();
+  scene.add(tl);
+  tl->play();
+
+  tl->add(new MyAnimation(
+      [man1](float progress) {
+        float t = fmod(progress, 0.25f) / 0.25f;
+        man1->setPosition(new MyPoint({displayWidth * (1.2f * progress - 0.1f) - halfDisplayWidth, 50.0f * fabs(sinf(t * TAU))}));
+        man1->leg11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
+        man1->leg12->setAngle(PI * (1.8f + 0.7f * sinf(t * TAU)));
+        man1->leg21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
+        man1->leg22->setAngle(PI * (1.8f + 0.7f * sinf((0.5f + t) * TAU)));
+        man1->arm11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
+        man1->arm12->setAngle(PI * (2.2f + 0.5f * sinf(t * TAU)));
+        man1->arm21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
+        man1->arm22->setAngle(PI * (2.2f + 0.5f * sinf((0.5f + t) * TAU)));
+        man1->translate(new MyPoint({10 * sinf(2 * (t - 0.05f) * TAU), 0}));
+      },
+      8000));
+
+  tl->loop(true);
+
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
   elapsedTime = 0;
 
@@ -335,12 +361,36 @@ void update() {
 }
 
 void draw() {
-  all.draw(); 
+  all.draw();
   frameCount++;
+}
+
+void onReshape(int width,int height)
+{
+  GLfloat aspect;
+
+  if (height == 0)
+    height = 1;
+
+  aspect = (GLfloat)width / (GLfloat)height;
+
+  glViewport(0, 0, width, height);
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
+             halfDisplayHeight);
+  // if (width >= height)
+  //   gluOrtho2D(-500.0 * aspect, 500.0 * aspect, -500.0, 500.0);
+  // else
+  //   gluOrtho2D(-500.0, 500.0, -500.0 / aspect, 500.0 / aspect);
+
 }
 
 void onDisplay() {
   glClear(GL_COLOR_BUFFER_BIT);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
   update();
   draw();
   glFlush();
@@ -363,6 +413,7 @@ int main(int argc, char **argv) {
   glutCreateWindow("Test OpenGL");
   init();
   glutDisplayFunc(onDisplay);
+  glutReshapeFunc(onReshape);
   glutIdleFunc(onRedisplay);
   glutMouseFunc(onMouse);
   glutMainLoop();

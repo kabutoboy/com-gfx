@@ -21,6 +21,7 @@ public:
   virtual void embedPosition() = 0;
   virtual void limitDraw(float) = 0;
   virtual void useDrawLimit(bool) = 0;
+  virtual MyPoint *getPosition() = 0;
 };
 
 #endif // ifndef MY_DRAWABLE_

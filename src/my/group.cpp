@@ -1,9 +1,12 @@
 #include "my/drawable.hpp"
 #include "my/group.hpp"
 #include "my/point.hpp"
-#include <iostream>
+#include <cmath>
+// #include <iostream>
 
 MyGroup::MyGroup() {
+  angle = 0;
+  position.assign({0, 0});
   limitDraw(1);
   useDrawLimit(true);
   totalVertices = 0;
@@ -63,9 +66,11 @@ void MyGroup::rotate(float amount) {
   for (auto &c : children) {
     c->rotate(amount);
   }
+  angle += amount;
 }
 
 void MyGroup::translate(MyPoint *amount) {
+  position.add(amount);
   for (auto &c : children) {
     c->translate(amount);
   }
@@ -79,14 +84,23 @@ void MyGroup::setScale(float amount) {
 
 void MyGroup::setAngle(float amount) {
   for (auto &c : children) {
+    float a = cosf(amount - angle);
+    float b = sinf(amount - angle);
+    auto pos = c->getPosition()->sub(position.copy());
+    c->setPosition(
+        new MyPoint({position.at(0) + a * pos->at(0) - b * pos->at(1),
+                     position.at(1) + b * pos->at(0) + a * pos->at(1)}));
     c->setAngle(amount);
   }
+  angle = amount;
 }
 
 void MyGroup::setPosition(MyPoint *amount) {
+  auto diff = amount->copy()->sub(position.copy());
   for (auto &c : children) {
-    c->setPosition(amount);
+    c->translate(diff);
   }
+  position = *amount;
 }
 
 void MyGroup::setAlpha(float amount) {
@@ -134,3 +148,5 @@ void MyGroup::limitDraw(float limit) {
 }
 
 void MyGroup::useDrawLimit(bool use) { usingDrawLimit = use; }
+
+MyPoint *MyGroup::getPosition() { return position.copy(); }
