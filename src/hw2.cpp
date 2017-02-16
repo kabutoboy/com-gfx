@@ -130,6 +130,11 @@ void onMouse(int button, int state, int x, int y) {
   }
 }
 
+void onTimer(int value) {
+  glutPostRedisplay();
+  glutTimerFunc(frameTime, onTimer, 0);
+}
+
 int main(int argc, char **argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -139,7 +144,8 @@ int main(int argc, char **argv) {
   init();
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onReshape);
-  glutIdleFunc(onRedisplay);
+  // glutIdleFunc(onRedisplay);
+  glutTimerFunc(0, onTimer, 0);
   glutMouseFunc(onMouse);
   glutMainLoop();
   return 0;

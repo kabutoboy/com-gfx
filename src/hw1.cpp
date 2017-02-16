@@ -161,8 +161,8 @@ void init(void) {
           y > halfDisplayHeight + sfScale * r) {
         continue;
       }
-      auto sunFlower = new MySunFlower{
-          0, TAU * (float)(i + j) / (float)(m + n), new MyPoint({x, y})};
+      auto sunFlower = new MySunFlower{0, TAU * (float)(i + j) / (float)(m + n),
+                                       new MyPoint({x, y})};
       float minRowScale = (0.1f + 0.9f * powf(1.0f / (float)m, 0.7f));
       // normalize
       float scaleColorIntensity =
@@ -251,7 +251,8 @@ void init(void) {
                 // scale
                 float __progress = PI * _progress;
                 // integral of sin^2
-                _drawLimit = (2.0f * __progress - sinf(2.0f * __progress)) / TAU;
+                _drawLimit =
+                    (2.0f * __progress - sinf(2.0f * __progress)) / TAU;
                 // _drawLimit = _progress;
               } else {
                 float _progress = (progress - 0.9f) / 0.1f;
@@ -320,7 +321,9 @@ void init(void) {
   tl->add(new MyAnimation(
       [man1](float progress) {
         float t = fmod(progress, 0.25f) / 0.25f;
-        man1->setPosition(new MyPoint({displayWidth * (1.2f * progress - 0.1f) - halfDisplayWidth, 50.0f * fabs(sinf(t * TAU))}));
+        man1->setPosition(new MyPoint(
+            {displayWidth * (1.2f * progress - 0.1f) - halfDisplayWidth,
+             50.0f * abs(sinf(t * TAU))}));
         man1->leg11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
         man1->leg12->setAngle(PI * (1.8f + 0.7f * sinf(t * TAU)));
         man1->leg21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
@@ -365,8 +368,7 @@ void draw() {
   frameCount++;
 }
 
-void onReshape(int width,int height)
-{
+void onReshape(int width, int height) {
   GLfloat aspect;
 
   if (height == 0)
@@ -384,7 +386,6 @@ void onReshape(int width,int height)
   //   gluOrtho2D(-500.0 * aspect, 500.0 * aspect, -500.0, 500.0);
   // else
   //   gluOrtho2D(-500.0, 500.0, -500.0 / aspect, 500.0 / aspect);
-
 }
 
 void onDisplay() {
@@ -405,6 +406,11 @@ void onMouse(int button, int state, int x, int y) {
   }
 }
 
+void onTimer(int value) {
+  glutPostRedisplay();
+  glutTimerFunc(frameTime, onTimer, 0);
+}
+
 int main(int argc, char **argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -414,7 +420,8 @@ int main(int argc, char **argv) {
   init();
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onReshape);
-  glutIdleFunc(onRedisplay);
+  // glutIdleFunc(onRedisplay);
+  glutTimerFunc(0, onTimer, 0);
   glutMouseFunc(onMouse);
   glutMainLoop();
   return 0;
