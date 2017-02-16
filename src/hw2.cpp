@@ -97,19 +97,20 @@ void draw() {
 }
 
 void onReshape(int width, int height) {
-  GLfloat aspect;
+  // GLfloat aspect;
 
   if (height == 0)
     height = 1;
 
-  aspect = (GLfloat)width / (GLfloat)height;
+  // aspect = (GLfloat)width / (GLfloat)height;
 
   glViewport(0, 0, width, height);
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
-             halfDisplayHeight);
+  gluOrtho2D(-width / 2, width / 2, -height / 2, height / 2);
+  // gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
+  //            halfDisplayHeight);
 }
 
 void onDisplay() {

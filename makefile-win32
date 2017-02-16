@@ -20,8 +20,8 @@ MY_OBJ = $(subst src,obj,$(subst .cpp,.o,$(MY_SRC)))
 all : $(OBJ)
 
 bin/%.exe : obj/%.o $(MY_OBJ)
-	g++ -o "$@" $^ -L"lib" -lfreeglut -lopengl32 -lglu32 -std=c++14
+	g++ -o "$@" $^ -L"lib" -lfreeglut -lopengl32 -lglu32 -std=c++14 -Wall
 
 obj/%.o : src/%.cpp $(HPP)
 	mkdir -p $(dir $@)
-	g++ -c -o "$@" "$<" -I"include" -std=c++14
+	g++ -c -o "$@" "$<" -I"include" -std=c++14 -Wall

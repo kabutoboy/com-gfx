@@ -204,7 +204,6 @@ void init(void) {
         int dir = std::rand() % 2 == 0 ? 1 : -1;
         tl->add(new MyAnimation(
             [sunFlower, sfScale, x, y, dir](float progress) {
-              float factor;
               float jump = sfScale * 300.0f;
               float _x = x;
               float _y = y;
@@ -231,7 +230,6 @@ void init(void) {
       } else if (choice == 1) {
         tl->add(new MyAnimation(
             [sunFlower, sfScale, x, y](float progress) {
-              float factor;
               float jump = sfScale * 300.0f;
               float _x = x;
               float _y = y;
@@ -323,7 +321,7 @@ void init(void) {
         float t = fmod(progress, 0.25f) / 0.25f;
         man1->setPosition(new MyPoint(
             {displayWidth * (1.2f * progress - 0.1f) - halfDisplayWidth,
-             50.0f * abs(sinf(t * TAU))}));
+             50.0f * std::abs(sinf(t * TAU))}));
         man1->leg11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
         man1->leg12->setAngle(PI * (1.8f + 0.7f * sinf(t * TAU)));
         man1->leg21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
@@ -369,19 +367,20 @@ void draw() {
 }
 
 void onReshape(int width, int height) {
-  GLfloat aspect;
+  // GLfloat aspect;
 
   if (height == 0)
     height = 1;
 
-  aspect = (GLfloat)width / (GLfloat)height;
+  // aspect = (GLfloat)width / (GLfloat)height;
 
   glViewport(0, 0, width, height);
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
-             halfDisplayHeight);
+  gluOrtho2D(-width / 2, width / 2, -height / 2, height / 2);
+  // gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
+  //            halfDisplayHeight);
   // if (width >= height)
   //   gluOrtho2D(-500.0 * aspect, 500.0 * aspect, -500.0, 500.0);
   // else

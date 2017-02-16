@@ -18,11 +18,11 @@ public:
 
 protected:
   std::vector<MyAnimation *> playlist;
-  int index;
-  int repeatAt;
-  int frameRate;
-  int frameTime;
-  int elapsedTime;
+  unsigned index;
+  unsigned repeatAt;
+  unsigned frameRate;
+  unsigned frameTime;
+  unsigned elapsedTime;
   bool playing;
   bool looping;
   bool finished;
