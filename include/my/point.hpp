@@ -28,12 +28,16 @@ public:
   MyPoint *add(MyPoint *);
   MyPoint *sub(MyPoint *);
   MyPoint *abs();
+  MyPoint *pow(float);
+  float sum();
 
   // STATIC
   static MyPoint *add(MyPoint *, MyPoint *);
   static MyPoint *sub(MyPoint *, MyPoint *);
   static MyPoint *subAbs(MyPoint *, MyPoint *);
+  static MyPoint *pow(MyPoint *, float);
   static MyPoint *rgb(int);
+  static float sum(MyPoint *);
 
 protected:
   std::vector<float> data;

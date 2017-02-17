@@ -29,6 +29,21 @@ void MyTimeline::setFrameRate(int frameRate) {
 
 void MyTimeline::setRepeatFrame(int i) { this->repeatAt = i; }
 
+void MyTimeline::go(int i) {
+  if (i >= 0 && i < playlist.size()) {
+    index = i;
+    finished = false;
+    // playlist.at(index)->restart();
+  }
+}
+
+void MyTimeline::restart() {
+  if (index >= 0 && index < playlist.size()) {
+    playlist.at(index)->restart();
+    finished = false;
+  }
+}
+
 bool MyTimeline::update(int deltaTime) {
   if (finished) {
     return true;

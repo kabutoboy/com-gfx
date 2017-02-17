@@ -14,6 +14,8 @@ public:
   void add(MyAnimation *);
   void setFrameRate(int);
   void setRepeatFrame(int);
+  void go(int);
+  void restart();
   bool update(int) override;
 
 protected:

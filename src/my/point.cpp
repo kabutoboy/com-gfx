@@ -79,6 +79,17 @@ MyPoint *MyPoint::abs() {
   return this;
 }
 
+MyPoint *MyPoint::pow(float p) {
+  std::for_each(data.begin(), data.end(), [p](float &x) { x = std::pow(x, p); });
+  return this;
+}
+
+float MyPoint::sum() {
+  float s = 0;
+  std::for_each(data.begin(), data.end(), [&s](float &x) { s += x; });
+  return s;
+}
+
 // STATIC
 MyPoint *MyPoint::add(MyPoint *a, MyPoint *b) { return a->copy()->add(b); }
 
@@ -86,6 +97,14 @@ MyPoint *MyPoint::sub(MyPoint *a, MyPoint *b) { return b->copy()->sub(b); }
 
 MyPoint *MyPoint::subAbs(MyPoint *a, MyPoint *b) {
   return b->copy()->sub(b)->abs();
+}
+
+MyPoint *MyPoint::pow(MyPoint *a, float p) {
+  return a->copy()->pow(p);
+}
+
+float MyPoint::sum(MyPoint *a) {
+  return a->copy()->sum();
 }
 
 MyPoint *MyPoint::rgb(int hex) {

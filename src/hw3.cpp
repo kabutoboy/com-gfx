@@ -1,8 +1,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <vector>
 
 #include "my/animation.hpp"
+#include "my/apple.hpp"
 #include "my/circle.hpp"
 #include "my/ellipse.hpp"
 #include "my/group.hpp"
@@ -36,8 +38,14 @@ bool mouseLeftDown = false;
 bool mouseRightDown = false;
 float mouseViewX;
 float mouseViewY;
+auto mousePos = new MyPoint({mouseViewX, mouseViewY});
 
+auto apple = new MyApple();
+float appleScl = 0.3f;
+float appleRadius = MyApple::RADIUS * appleScl;
+bool appleDragging = false;
 auto man = new MyMan();
+auto manHappyTimeline = new MyTimeline();
 
 void init(void) {
   std::srand(std::time(0));
@@ -47,40 +55,108 @@ void init(void) {
   // glClearColor(0.2, 0.2, 0.3, 1.0);
   glClearColor(1, 1, 1, 1);
 
+  float x = -halfDisplayWidth + (float)(std::rand() % displayWidth);
+  float y = -halfDisplayHeight + (float)(std::rand() % displayHeight);
+  // float scl = 0.5f + 0.1f * ((float)(std::rand() % 10) / 10.0f);
+  float scl = appleScl;
+  apple->setPosition(new MyPoint({x, y}));
+  apple->setScale(scl);
+  all.add(apple);
+
   man->setPosition(new MyPoint({0, 0}));
+  man->arm11->setAngle(TAU / 4.0f);
+  man->arm21->setAngle(-TAU / 4.0f);
   all.add(man);
 
-  // auto tl = new MyTimeline();
-  // scene.add(tl);
-  // tl->play();
+  auto man1 = man;
+  float manIdleCycleTime = 1000;
+  float manWalkCycleTime = 2000;
+  float manMoveCycleTime = 8000;
+  auto man1Idle = [man1](float progress) {
 
-  // auto man1 = man;
+  };
+  auto man1Walk = [man1](float progress) {
+    float t = progress;
+    man1->leg11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
+    man1->leg12->setAngle(PI * (1.8f + 0.7f * sinf(t * TAU)));
+    man1->leg21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
+    man1->leg22->setAngle(PI * (1.8f + 0.7f * sinf((0.5f + t) * TAU)));
+  };
+  auto man1Move = [man1](float progress) {
+    man1->setPosition(new MyPoint(
+        {displayWidth * (1.2f * progress - 0.1f) - halfDisplayWidth, 0}));
+    //  50.0f * std::abs(sinf(t * TAU))}));
+  };
 
-  // tl->add(new MyAnimation(
-  //     [man1](float progress) {
-  //       float t = fmod(progress, 0.25f) / 0.25f;
-  //       man1->setPosition(new MyPoint(
-  //           {displayWidth * (1.2f * progress - 0.1f) - halfDisplayWidth,
-  //            50.0f * std::abs(sinf(t * TAU))}));
-  //       man1->leg11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
-  //       man1->leg12->setAngle(PI * (1.8f + 0.7f * sinf(t * TAU)));
-  //       man1->leg21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
-  //       man1->leg22->setAngle(PI * (1.8f + 0.7f * sinf((0.5f + t) * TAU)));
-  //       man1->arm11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
-  //       man1->arm12->setAngle(PI * (2.2f + 0.5f * sinf(t * TAU)));
-  //       man1->arm21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
-  //       man1->arm22->setAngle(PI * (2.2f + 0.5f * sinf((0.5f + t) * TAU)));
-  //       man1->translate(new MyPoint({10 * sinf(2 * (t - 0.05f) * TAU), 0}));
-  //     },
-  //     8000));
-  //
+  auto tl = new MyTimeline();
+  tl->loop(true);
+  tl->play();
+  tl->add(new MyAnimation(man1Walk, manWalkCycleTime));
+  scene.add(tl);
+
+  auto apple1 = apple;
+  manHappyTimeline = new MyTimeline();
+  manHappyTimeline->add(new MyAnimation(
+      [man1, manHappyTimeline, &appleDragging, apple1](float progress) {
+        if (appleDragging) {
+          return;
+        }
+        auto applePos = apple1->getPosition();
+        auto destPos =
+            man1->getPosition()->add(new MyPoint({0, 65 + MyMan::BODY_LENGTH}));
+        auto destFromApple = destPos->copy()->sub(applePos);
+        applePos->scale(0.9f, destPos);
+        float distance = sqrt(destFromApple->copy()->pow(2)->sum());
+        // std::cout << distance << std::endl;
+        // if (distance > 8.0f) {
+          apple1->setPosition(applePos);
+        // }
+        // float angleToDest =
+        //     std::atan2(destFromApple->at(1), destFromApple->at(0));
+        // float moveDistance = moveSpeed / (float)frameRate;
+        // apple1->translate(new MyPoint({moveDistance * cosf(angleToDest),
+        //                                moveDistance * sinf(angleToDest)}));
+      },
+      400));
+  manHappyTimeline->add(new MyAnimation(
+      [man1, manHappyTimeline, &appleDragging, apple1](float progress) {
+        if (appleDragging) {
+          return;
+        }
+        auto applePos = apple1->getPosition();
+        auto destPos =
+            man1->getPosition()->add(new MyPoint({0, 45 + MyMan::BODY_LENGTH}));
+        auto destFromApple = destPos->copy()->sub(applePos);
+        applePos->scale(0.9f, destPos);
+        float distance = sqrt(destFromApple->copy()->pow(2)->sum());
+        // std::cout << distance << std::endl;
+        // if (distance > 8.0f) {
+          apple1->setPosition(applePos);
+        // }
+        // float angleToDest =
+        //     std::atan2(destFromApple->at(1), destFromApple->at(0));
+        // float moveDistance = moveSpeed / (float)frameRate;
+        // apple1->translate(new MyPoint({moveDistance * cosf(angleToDest),
+        //                                moveDistance * sinf(angleToDest)}));
+      },
+      400));
+  manHappyTimeline->loop(true);
+  // manHappyTimeline->setRepeatFrame(1);
+  scene.add(manHappyTimeline);
+
+  // tl = new MyTimeline();
   // tl->loop(true);
+  // tl->play();
+  // tl->add(new MyAnimation(man1Move, manMoveCycleTime));
+  // scene.add(tl);
 
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
   elapsedTime = 0;
 
   all.useDrawLimit(false);
-  scene.stop();
+  scene.play();
+  manHappyTimeline->stop();
+  // scene.stop();
 }
 
 float sqr(float x) { return x * x; }
@@ -103,14 +179,39 @@ void ik2(MyGroup *leg1, MyGroup *leg2, float len1, float len2, float x,
   leg2->setAngle(leg2Angle);
 }
 
-void updateMan() {
-  if (mouseLeftDown) {
-    ik2(man->arm21, man->arm22, 0.5f * MyMan::ARM_LENGTH,
-        0.5f * MyMan::ARM_LENGTH, mouseViewX, mouseViewY);
+void updateApple() {
+  if (appleDragging) {
+    apple->setPosition(mousePos);
   }
-  if (mouseRightDown) {
-    ik2(man->arm11, man->arm12, 0.5f * MyMan::ARM_LENGTH,
-        0.5f * MyMan::ARM_LENGTH, mouseViewX, mouseViewY);
+}
+
+void updateMan() {
+  // if (mouseLeftDown) {
+  //   ik2(man->arm21, man->arm22, 0.5f * MyMan::ARM_LENGTH,
+  //       0.5f * MyMan::ARM_LENGTH, mouseViewX, mouseViewY);
+  // }
+  // if (mouseRightDown) {
+  //   ik2(man->arm11, man->arm12, 0.5f * MyMan::ARM_LENGTH,
+  //       0.5f * MyMan::ARM_LENGTH, mouseViewX, mouseViewY);
+  // }
+  auto applePos = apple->getPosition();
+  float appleX = applePos->at(0);
+  float appleY = applePos->at(1);
+  ik2(man->arm21, man->arm22, 0.5f * MyMan::ARM_LENGTH,
+      0.5f * MyMan::ARM_LENGTH, appleX, appleY);
+  ik2(man->arm11, man->arm12, 0.5f * MyMan::ARM_LENGTH,
+      0.5f * MyMan::ARM_LENGTH, appleX, appleY);
+  auto applePosFromMan = applePos->sub(man->arm21->getPosition());
+  float appleFromMan = sqrt(applePosFromMan->copy()->pow(2)->sum());
+  if (appleFromMan > MyMan::ARM_LENGTH) {
+    float angleToApple =
+        std::atan2(applePosFromMan->at(1), applePosFromMan->at(0));
+    float moveSpeed = 200; // 100px per sec
+    float moveDistance = moveSpeed / (float)frameRate;
+    man->translate(new MyPoint({moveDistance * cosf(angleToApple),
+                                moveDistance * sinf(angleToApple)}));
+  } else {
+    manHappyTimeline->play();
   }
 }
 
@@ -123,6 +224,7 @@ void update() {
   elapsedTime2 += deltaTime;
   if (elapsedTime >= frameTime) {
     scene.update(elapsedTime);
+    updateApple();
     updateMan();
     elapsedTime = 0;
   }
@@ -172,16 +274,26 @@ void onMouseMove(int x, int y) {
   mouseY = y;
   mouseViewX = (float)mouseX - halfDisplayWidth;
   mouseViewY = -(float)mouseY + halfDisplayHeight;
+  mousePos->assign({mouseViewX, mouseViewY});
 }
 
 void onMouseButton(int button, int state, int x, int y) {
   if (button == GLUT_LEFT_BUTTON) {
     if (state == GLUT_DOWN) {
       mouseLeftDown = true;
-      scene.toggle();
+      float appleFromMouse =
+          sqrt(apple->getPosition()->sub(mousePos)->pow(2)->sum());
+      if (appleFromMouse < appleRadius) {
+        appleDragging = true;
+      }
+      // scene.toggle();
     }
     if (state == GLUT_UP) {
       mouseLeftDown = false;
+      appleDragging = false;
+      manHappyTimeline->go(0);
+      manHappyTimeline->restart();
+      manHappyTimeline->stop();
     }
   }
   if (button == GLUT_RIGHT_BUTTON) {
@@ -212,6 +324,7 @@ int main(int argc, char **argv) {
   glutTimerFunc(0, onTimer, 0);
   glutMouseFunc(onMouseButton);
   glutMotionFunc(onMouseMove);
+  glutPassiveMotionFunc(onMouseMove);
   glutMainLoop();
   return 0;
 }
