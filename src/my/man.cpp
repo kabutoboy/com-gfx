@@ -63,9 +63,9 @@ MyMan::MyMan(float scl, float rotation, MyPoint *translation) {
   leg21->add(legShape21);
   leg21->add(leg22);
 
-  add(head);
   add(arm11);
   add(leg11);
+  add(head);
   add(body);
   add(leg21);
   add(arm21);

@@ -51,7 +51,7 @@ void init(void) {
         float t = fmod(progress, 0.25f) / 0.25f;
         man1->setPosition(new MyPoint(
             {displayWidth * (1.2f * progress - 0.1f) - halfDisplayWidth,
-             50.0f * abs(sinf(t * TAU))}));
+             50.0f * std::abs(sinf(t * TAU))}));
         man1->leg11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
         man1->leg12->setAngle(PI * (1.8f + 0.7f * sinf(t * TAU)));
         man1->leg21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
