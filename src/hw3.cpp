@@ -68,22 +68,21 @@ void init(void) {
   man->arm21->setAngle(-TAU / 4.0f);
   all.add(man);
 
-  auto man1 = man;
   float manIdleCycleTime = 1000;
   float manWalkCycleTime = 2000;
   float manMoveCycleTime = 8000;
-  auto man1Idle = [man1](float progress) {
+  auto manIdle = [](float progress) {
 
   };
-  auto man1Walk = [man1](float progress) {
+  auto manWalk = [](float progress) {
     float t = progress;
-    man1->leg11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
-    man1->leg12->setAngle(PI * (1.8f + 0.7f * sinf(t * TAU)));
-    man1->leg21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
-    man1->leg22->setAngle(PI * (1.8f + 0.7f * sinf((0.5f + t) * TAU)));
+    man->leg11->setAngle(PI * (2.0f + 0.5f * sinf(t * TAU)));
+    man->leg12->setAngle(PI * (1.8f + 0.7f * sinf(t * TAU)));
+    man->leg21->setAngle(PI * (2.0f + 0.5f * sinf((0.5f + t) * TAU)));
+    man->leg22->setAngle(PI * (1.8f + 0.7f * sinf((0.5f + t) * TAU)));
   };
-  auto man1Move = [man1](float progress) {
-    man1->setPosition(new MyPoint(
+  auto manMove = [](float progress) {
+    man->setPosition(new MyPoint(
         {displayWidth * (1.2f * progress - 0.1f) - halfDisplayWidth, 0}));
     //  50.0f * std::abs(sinf(t * TAU))}));
   };
@@ -91,52 +90,51 @@ void init(void) {
   auto tl = new MyTimeline();
   tl->loop(true);
   tl->play();
-  tl->add(new MyAnimation(man1Walk, manWalkCycleTime));
+  tl->add(new MyAnimation(manWalk, manWalkCycleTime));
   scene.add(tl);
 
-  auto apple1 = apple;
   manHappyTimeline = new MyTimeline();
   manHappyTimeline->add(new MyAnimation(
-      [man1, manHappyTimeline, &appleDragging, apple1](float progress) {
+      [](float progress) {
         if (appleDragging) {
           return;
         }
-        auto applePos = apple1->getPosition();
+        auto applePos = apple->getPosition();
         auto destPos =
-            man1->getPosition()->add(new MyPoint({0, 65 + MyMan::BODY_LENGTH}));
+            man->getPosition()->add(new MyPoint({0, 65 + MyMan::BODY_LENGTH}));
         auto destFromApple = destPos->copy()->sub(applePos);
         applePos->scale(0.9f, destPos);
         float distance = sqrt(destFromApple->copy()->pow(2)->sum());
         // std::cout << distance << std::endl;
         // if (distance > 8.0f) {
-          apple1->setPosition(applePos);
+          apple->setPosition(applePos);
         // }
         // float angleToDest =
         //     std::atan2(destFromApple->at(1), destFromApple->at(0));
         // float moveDistance = moveSpeed / (float)frameRate;
-        // apple1->translate(new MyPoint({moveDistance * cosf(angleToDest),
+        // apple->translate(new MyPoint({moveDistance * cosf(angleToDest),
         //                                moveDistance * sinf(angleToDest)}));
       },
       400));
   manHappyTimeline->add(new MyAnimation(
-      [man1, manHappyTimeline, &appleDragging, apple1](float progress) {
+      [](float progress) {
         if (appleDragging) {
           return;
         }
-        auto applePos = apple1->getPosition();
+        auto applePos = apple->getPosition();
         auto destPos =
-            man1->getPosition()->add(new MyPoint({0, 45 + MyMan::BODY_LENGTH}));
+            man->getPosition()->add(new MyPoint({0, 45 + MyMan::BODY_LENGTH}));
         auto destFromApple = destPos->copy()->sub(applePos);
         applePos->scale(0.9f, destPos);
         float distance = sqrt(destFromApple->copy()->pow(2)->sum());
         // std::cout << distance << std::endl;
         // if (distance > 8.0f) {
-          apple1->setPosition(applePos);
+          apple->setPosition(applePos);
         // }
         // float angleToDest =
         //     std::atan2(destFromApple->at(1), destFromApple->at(0));
         // float moveDistance = moveSpeed / (float)frameRate;
-        // apple1->translate(new MyPoint({moveDistance * cosf(angleToDest),
+        // apple->translate(new MyPoint({moveDistance * cosf(angleToDest),
         //                                moveDistance * sinf(angleToDest)}));
       },
       400));
@@ -147,7 +145,7 @@ void init(void) {
   // tl = new MyTimeline();
   // tl->loop(true);
   // tl->play();
-  // tl->add(new MyAnimation(man1Move, manMoveCycleTime));
+  // tl->add(new MyAnimation(manMove, manMoveCycleTime));
   // scene.add(tl);
 
   lastTime = currentTime = glutGet(GLUT_ELAPSED_TIME);
