@@ -14,15 +14,17 @@ public:
   void add(MyAnimation *);
   void setFrameRate(int);
   void setRepeatFrame(int);
+  void go(int);
+  void restart();
   bool update(int) override;
 
 protected:
   std::vector<MyAnimation *> playlist;
-  int index;
-  int repeatAt;
-  int frameRate;
-  int frameTime;
-  int elapsedTime;
+  unsigned index;
+  unsigned repeatAt;
+  unsigned frameRate;
+  unsigned frameTime;
+  unsigned elapsedTime;
   bool playing;
   bool looping;
   bool finished;

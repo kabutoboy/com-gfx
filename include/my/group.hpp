@@ -2,6 +2,7 @@
 #define MY_GROUP_
 
 #include "drawable.hpp"
+#include "point.hpp"
 #include <vector>
 
 class MyGroup : public MyDrawable {
@@ -24,9 +25,12 @@ public:
   void embedPosition() override;
   void limitDraw(float) override;
   void useDrawLimit(bool) override;
+  MyPoint *getPosition() override;
 
 protected:
   std::vector<MyDrawable *> children;
+  MyPoint position;
+  float angle;
   float drawLimit;
   int totalVertices;
   bool usingDrawLimit;

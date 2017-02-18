@@ -19,9 +19,14 @@ MY_OBJ = $(subst src,obj,$(subst .cpp,.o,$(MY_SRC)))
 
 all : $(OBJ)
 
+bin/main2D.exe : obj/main2D.o obj/TimeSettings.o obj/Circle.o obj/Shape.o obj/Rectangle.o obj/CreateObject.o obj/Point.o obj/DeviceController.o
+	if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
+		g++ -o "bin/main2D.exe" obj/main2D.o obj/TimeSettings.o obj/Circle.o obj/Shape.o obj/Rectangle.o obj/CreateObject.o obj/Point.o obj/DeviceController.o -lGL -lGLU -lglut -std=c++14 -Wall
+
 bin/%.exe : obj/%.o $(MY_OBJ)
-	g++ -o "$@" $^ -L"lib\x64" -lfreeglut -lopengl32 -lglu32 -std=c++14
+	if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
+	g++ -o "$@" $^ -L"lib\x64" -lfreeglut -lopengl32 -lglu32 -std=c++14 -Wall
 
 obj/%.o : src/%.cpp $(HPP)
 	if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
-	g++ -c -o "$@" "$<" -I"include" -std=c++14
+	g++ -c -o "$@" "$<" -I"include" -std=c++14 -Wall

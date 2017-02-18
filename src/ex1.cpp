@@ -28,8 +28,8 @@ void init(void) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   glClearColor(0.2, 0.2, 0.3, 1.0);
-  gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
-             halfDisplayHeight);
+  // gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
+  //            halfDisplayHeight);
 
   auto *myCircle = new MyCircle(70, 8);
   myCircle->setColor(0xff0000);
@@ -64,8 +64,32 @@ void update() {
 
 void draw() { all.draw(); }
 
+void onReshape(int width,int height)
+{
+  GLfloat aspect;
+
+  if (height == 0)
+    height = 1;
+
+  aspect = (GLfloat)width / (GLfloat)height;
+
+  glViewport(0, 0, width, height);
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluOrtho2D(-halfDisplayWidth, halfDisplayWidth, -halfDisplayHeight,
+             halfDisplayHeight);
+  // if (width >= height)
+  //   gluOrtho2D(-500.0 * aspect, 500.0 * aspect, -500.0, 500.0);
+  // else
+  //   gluOrtho2D(-500.0, 500.0, -500.0 / aspect, 500.0 / aspect);
+
+}
+
 void onDisplay() {
   glClear(GL_COLOR_BUFFER_BIT);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
   update();
   draw();
   glFlush();
@@ -92,6 +116,7 @@ int main(int argc, char **argv) {
   glutCreateWindow("Example 1");
   init();
   glutDisplayFunc(onDisplay);
+  glutReshapeFunc(onReshape);
   glutIdleFunc(onRedisplay);
   glutMouseFunc(onMouse);
   glutMainLoop();
