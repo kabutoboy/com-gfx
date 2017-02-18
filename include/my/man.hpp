@@ -13,9 +13,9 @@ public:
   static float constexpr BODY_THICKNESS = 40;
   static float constexpr BODY_LENGTH = 80;
   static float constexpr ARM_THICKNESS = 15;
-  static float constexpr ARM_LENGTH = 80;
+  static float constexpr ARM_LENGTH = 100;
   static float constexpr LEG_THICKNESS = 20;
-  static float constexpr LEG_LENGTH = 100;
+  static float constexpr LEG_LENGTH = 120;
   MyMan(float = 1, float = 0, MyPoint * = new MyPoint({0, 0}));
   MyGroup *head;
   MyGroup *body;

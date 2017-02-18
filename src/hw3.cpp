@@ -101,7 +101,7 @@ void init(void) {
         }
         auto applePos = apple->getPosition();
         auto destPos =
-            man->getPosition()->add(new MyPoint({0, 65 + MyMan::BODY_LENGTH}));
+            man->getPosition()->add(new MyPoint({0, 85 + MyMan::BODY_LENGTH}));
         auto destFromApple = destPos->copy()->sub(applePos);
         applePos->scale(0.9f, destPos);
         float distance = sqrt(destFromApple->copy()->pow(2)->sum());
@@ -123,7 +123,7 @@ void init(void) {
         }
         auto applePos = apple->getPosition();
         auto destPos =
-            man->getPosition()->add(new MyPoint({0, 45 + MyMan::BODY_LENGTH}));
+            man->getPosition()->add(new MyPoint({0, 50 + MyMan::BODY_LENGTH}));
         auto destFromApple = destPos->copy()->sub(applePos);
         applePos->scale(0.9f, destPos);
         float distance = sqrt(destFromApple->copy()->pow(2)->sum());
