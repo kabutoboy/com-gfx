@@ -31,3 +31,9 @@ bin/% : obj/%.o $(MY_OBJ)
 obj/%.o : src/%.cpp $(HPP)
 	mkdir -p $(dir $@)
 	clang++ -c -o "$@" "$<" -I"include" -std=c++14 -Wall
+
+bin/e% : obj/e%.o
+	clang -o "$@" $^ -lGL -lGLU -lglut -lm -Wall
+
+obj/e%.o : src/e%.c
+	clang -c -o "$@" "$<" -Wall
