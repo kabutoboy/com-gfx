@@ -1,0 +1,9 @@
+.PHONY : all
+
+bin/% : obj/%.o 
+	mkdir -p $(dir $@)
+	clang -o "$@" $^ -lGL -lGLU -lglut -lm -Wall
+
+obj/%.o : src/%.c
+	mkdir -p $(dir $@)
+	clang -c -o "$@" "$<" -Wall

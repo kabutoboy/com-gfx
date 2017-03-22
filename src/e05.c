@@ -4,6 +4,18 @@
 #define PI 3.14159265358979323846
 #define PI2 PI*2
 
+double R(float u, float v) {
+  return 0.5 * (exp(u) - exp(u-1.0)) * (1.0 - 0.05 * pow(sin(3000*u), 12));
+}
+double X(float u, float v) {
+  return R(u, v) * cos(v);
+}
+double Y(float u, float v) {
+  return (R(u, v) * sin(v) + 0.5 * (exp(u) + exp(u-1.0))) * sin(360*u);
+}
+double Z(float u, float v) {
+  return (R(u, v) * sin(v) + 0.5 * (exp(u) + exp(u-1.0))) * cos(360*u);
+}
 double sphereX(float r, float normtheta, float normphi) {
   return r * cos(normtheta * PI) * sin(normphi * PI2);
 }
@@ -14,11 +26,53 @@ double sphereZ(float r, float normtheta, float normphi) {
   return r * cos(normphi * PI2);
 }
 
-float c = 5;
+float c = 10;
 float s = 0;
 float t = 0;
 float ds = 0.0005;
 float dt = 0.001;
+int id;
+
+void cache() {
+  id = glGenLists(1);
+
+  glNewList(id, GL_COMPILE);
+  glColor3d(1.0,1.0,1.0);
+  int m = 200;
+  int n = 50;
+  float m_inv = 1.0 / m;
+  float n_inv = 1.0 / n;
+  float r = 4;
+  float dx = 0.1;
+  float dy = 0.1;
+  float dz = 0.1;
+  float ox = 0;
+  float oy = 0;
+  float oz = 5;
+  for (int i = -m; i < m; i++) {
+    glBegin(GL_LINE_LOOP);
+    for (int j = -n; j < n; j++) {
+      float i0 = r * i * m_inv;
+      float j0 = r * j * n_inv;
+      GLdouble face[][3] = {
+        {
+          ox + X(i0, j0),
+          oy + Y(i0, j0),
+          oz + Z(i0, j0)
+        },
+        {
+          ox + dx+X(i0, j0),
+          oy + dy+Y(i0, j0),
+          oz + dz+Z(i0, j0)
+        }};
+      for (int k = 0; k < 1; k++){
+        glVertex3dv(face[k]);
+      }
+    }
+    glEnd();
+  }
+  glEndList();
+}
 
 void display(void)
 {
@@ -39,51 +93,7 @@ void display(void)
   t += dt;
   s += ds;
   
-  glColor3d(1.0,1.0,1.0);
-  int m = 5;
-  int n = 10;
-  float m_inv = 1.0 / m;
-  float n_inv = 1.0 / n;
-  float r = 3;
-      glBegin(GL_LINES);
-  for (int i = 0; i < m; i++) {
-    for (int j = 0; j < n; j++) {
-      float i0 = i * m_inv;
-      float j0 = j * n_inv;
-      float i1 = (i+1) * m_inv;
-      float j1 = (j+1) * n_inv;
-      GLdouble face[][3] = {
-        {
-          sphereX(r, i0, j0),
-          sphereY(r, i0, j0),
-          sphereZ(r, i0, j0)
-        },
-        {
-          sphereX(r, i1, j0),
-          sphereY(r, i1, j0),
-          sphereZ(r, i1, j0)
-        },
-        {
-          sphereX(r, i1, j1),
-          sphereY(r, i1, j1),
-          sphereZ(r, i1, j1)
-        },
-        {
-          sphereX(r, i0, j1),
-          sphereY(r, i0, j1),
-          sphereZ(r, i0, j1)
-        },
-        {
-          sphereX(r, i0, j0),
-          sphereY(r, i0, j0),
-          sphereZ(r, i0, j0)
-        }};
-      for (int k = 0; k < 5; k++){
-        glVertex3dv(face[k]);
-      }
-    }
-  }
-      glEnd();
+  glCallList(id);
   glFlush();
 
 }
@@ -92,7 +102,7 @@ void init()
 {
 
   glClearColor (0.0, 0.0, 0.0, 0.0); 
-
+  cache();
 }
 
 void reshape(int w,int h)
@@ -101,7 +111,7 @@ void reshape(int w,int h)
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
-  glFrustum(-2.0,2.0,-2.0,2.0,2.0,10.0);
+  glFrustum(-3.0,3.0,-3.0,3.0,2.0,20.0);
 }
 
 void idle() {
