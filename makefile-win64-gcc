@@ -1,0 +1,9 @@
+.PHONY : all
+
+bin/%.exe : obj/%.o
+	if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
+	gcc -o "$@" $^ -L"lib\x64" -lfreeglut -lopengl32 -lglu32 -lm -Wall
+
+obj/%.o : src/%.c
+	if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
+	gcc -c -o "$@" "$<" -I"include" -Wall
